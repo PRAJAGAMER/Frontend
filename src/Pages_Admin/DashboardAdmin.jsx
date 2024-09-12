@@ -8,6 +8,7 @@ import Header from "../ComponentsAdmin/HeaderAdmin";
 const DashboardAdmin = () => {
   const [applicantsData, setApplicantsData] = useState([]);
   const [totalApplicants, setTotalApplicants] = useState(0);
+  const [verifyingApplicants, setVerifyingApplicants] = useState(0);
   const [acceptedApplicants, setAcceptedApplicants] = useState(0);
   const [rejectedApplicants, setRejectedApplicants] = useState(0);
   const [error, setError] = useState(null);
@@ -33,6 +34,7 @@ const DashboardAdmin = () => {
 
         setApplicantsData(response.data.applicantsList || []);
         setTotalApplicants(response.data.totalApplicants || 0);
+        setVerifyingApplicants(response.data.verifyingApplicants || 0);
         setAcceptedApplicants(response.data.acceptedApplicants || 0);
         setRejectedApplicants(response.data.rejectedApplicants || 0);
       } catch (error) {
@@ -98,7 +100,7 @@ const DashboardAdmin = () => {
                 <DocumentTextIcon className="h-16 w-16 text-green-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Diproses</h3>
-                  <p className="text-4xl">3</p>
+                  <p className="text-4xl">{verifyingApplicants}</p>
                 </div>
               </div>
               <div className="bg-white p-8 rounded shadow flex items-center">

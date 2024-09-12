@@ -103,7 +103,7 @@ function HasilDaftarMagang() {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
     return dateString
       ? new Date(dateString).toLocaleDateString("id-ID", options)
-      : "N/A";
+      : "Kosong";
   };
 
   return (
@@ -149,27 +149,27 @@ function HasilDaftarMagang() {
                   <tr key={peserta.id}>
                     <td className="py-2 px-4 border-b">{peserta.name}</td>
                     <td className="py-2 px-4 border-b">
-                      {peserta.University.nim || "N/A"}
+                      {peserta.University.nim || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta.Profile.nik || "N/A"}
+                      {peserta.Profile.nik || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">{peserta.email}</td>
                     <td className="py-2 px-4 border-b">
-                      {peserta.Profile.telp_user || "N/A"}
+                      {peserta.Profile.telp_user || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta.University.univ_name || "N/A"}
+                      {peserta.University.univ_name || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta.University.major || "N/A"}
+                      {peserta.University.major || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta.Regist.available_space || "N/A"}
+                      {peserta?.Regist?.available_space || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
                       <a
-                        href={peserta.Regist.recommend_letter || "#"}
+                        href={peserta.Regist?.recommend_letter ? `C:\Users\LENOVO\OneDrive\Documents\prajagamer\Backend\ ${peserta.Regist.recommend_letter}` : "#"}
                         className="text-blue-500 hover:underline"
                       >
                         {peserta.Regist.recommend_letter
@@ -202,7 +202,7 @@ function HasilDaftarMagang() {
                       {formatDate(peserta.Regist.last_period)}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {formatDate(peserta.tanggalPendaftaran)}
+                      {formatDate(peserta.Regist.updateAt)}
                     </td>
                     <td className="py-2 px-4 border-b">{peserta.status}</td>
                     <td className="py-2 px-4 border-b flex flex-row w-72">
