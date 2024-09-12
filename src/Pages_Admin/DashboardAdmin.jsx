@@ -60,11 +60,20 @@ const DashboardAdmin = () => {
     fetchData();
   }, []);
 
-  const sendWhatsAppMessage = (phoneNumber, message) => {
+  const sendWhatsAppMessage = (phoneNumber, status) => {
     // Cek apakah phoneNumber tidak undefined atau kosong
     if (!phoneNumber) {
       console.error("Nomor telepon tidak ditemukan.");
       return;
+    }
+
+    // Pesan yang akan dikirim ke WhatsApp
+    let message = "";
+
+    if (status === "Accepted") {
+      message = `Selamat, lamaran magang Anda telah diterima. Terima kasih telah mendaftar!`;
+    } else if (status === "Rejected") {
+      message = `Maaf, lamaran magang Anda tidak dapat kami terima. Terima kasih telah mendaftar dan tetap semangat!`;
     }
   
     const formattedPhoneNumber = phoneNumber.startsWith("0")
@@ -79,7 +88,7 @@ const DashboardAdmin = () => {
     window.open(whatsappURL, "_blank"); // Membuka WhatsApp di tab baru
   };
 
-  const handleUpdateStatus = async (id, status) => {
+  const handleUpdateStatus = async (id, status, index) => {
     console.log("userId: " + id);
     console.log("status: " + status);
     const token = localStorage.getItem("token");
@@ -104,34 +113,22 @@ const DashboardAdmin = () => {
       );
 
       console.log("response: " + response);
-
-      window.location.reload();
     } catch (error) {
       console.error("Error updating status:", error);
-
-      const response = await axios.get("http://localhost:5000/api/users2", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      let data = response.data[0].Profile.telp_user;
-      console.log("data: ", data);
-
-      // Pesan yang akan dikirim ke WhatsApp
-      let message = "";
-
-      if (status === "Accepted") {
-        message = `Selamat, lamaran magang Anda telah diterima. Terima kasih telah mendaftar!`;
-      } else if (status === "Rejected") {
-        message = `Maaf, lamaran magang Anda tidak dapat kami terima. Terima kasih telah mendaftar dan tetap semangat!`;
-      }
-
-      console.log(message);
-      // Kirim pesan WA
-      sendWhatsAppMessage(data, message);
     }
+
+    const response = await axios.get("http://localhost:5000/api/users2", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const notelp = response.data[index].Profile.telp_user;
+    console.log("notelp: ", notelp);
+
+    // Kirim pesan WA
+    sendWhatsAppMessage(notelp, status);
   };
 
   return (
@@ -228,7 +225,8 @@ const DashboardAdmin = () => {
                               onClick={() =>
                                 handleUpdateStatus(
                                   peserta.user_id,
-                                  "Accepted"
+                                  "Accepted",
+                                  index
                                 )
                               }
                             >
@@ -239,7 +237,8 @@ const DashboardAdmin = () => {
                               onClick={() =>
                                 handleUpdateStatus(
                                   peserta.user_id,
-                                  "Rejected"
+                                  "Rejected",
+                                  index
                                 )
                               }
                             >

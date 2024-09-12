@@ -70,9 +70,9 @@ function HasilDaftarMagang() {
   const updateUserStatus = async (userId, status) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/updateUserStatus2",
+        "http://localhost:5000/api/users/status2",
         {
-          method: "POST",
+          method: "put",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${getToken()}`,
