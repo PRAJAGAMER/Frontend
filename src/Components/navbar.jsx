@@ -107,19 +107,25 @@ const Navbar = () => {
               >
                 Daftar Magang
               </button>
-              <button
-                className={`block w-full px-5 py-2 text-left text-xl ${
-                  isActive("/daftarmagang")
-                    ? "text-[#D24545] font-bold"
-                    : "text-[#919191]"
-                }`}
-                onClick={() => {
-                  navigate("/profileuser");
-                  setIsSidebarOpen(false);
-                }}
-              >
-                Akun
-              </button>
+              {!token ? (
+                null
+              ) : (
+                <div className="mt-auto">
+                  <button
+                    className={`block w-full px-5 py-2 text-left text-xl ${
+                      isActive("/daftarmagang")
+                        ? "text-[#D24545] font-bold"
+                        : "text-[#919191]"
+                    }`}
+                    onClick={() => {
+                      navigate("/profileuser");
+                      setIsSidebarOpen(false);
+                    }}
+                  >
+                    Akun
+                  </button>
+                </div>
+              )}
 
               {!token ? (
                 <button

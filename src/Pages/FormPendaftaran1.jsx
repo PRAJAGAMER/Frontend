@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate untuk navi
 import { useDispatch, useSelector } from "react-redux"; // Import useSelector untuk mengambil state dari Redux
 import { getDataPendaftaran } from "../redux/Action/formPendaftaranAction";
 import { setDataFormPendaftaran } from "../redux/Reducers/pendaftaranMagangReducers";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function FormPendaftaran1() {
   const navigate = useNavigate(); // Inisialisasi useNavigate
@@ -41,7 +43,22 @@ function FormPendaftaran1() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("formData1", formData1);
+
+    // Validation
+    if (formData1.ketersediaanPenempatan === null) {
+      toast.warning("Harap lengkapi semua data!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      return; // Stop form submission
+    }
+
     dispatch(setDataFormPendaftaran(formData1));
     navigate("/formpendaftaran2");
   };

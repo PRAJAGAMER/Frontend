@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate untuk navigasi
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate untuk navigasi
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"; // Import Heroicon
 import { useDispatch, useSelector } from "react-redux"; // Import useSelector untuk mengambil state dari Redux
 import Navbar from "../Components/navbar";
@@ -8,6 +8,8 @@ import {
   getDataPendaftaran,
   postPendaftaranMagang,
 } from "../redux/Action/formPendaftaranAction";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function FormPendaftaran2() {
   const navigate = useNavigate(); // Inisialisasi useNavigate
@@ -31,6 +33,8 @@ function FormPendaftaran2() {
     dispatch(getDataPendaftaran());
   }, []);
 
+  // State for checkbox
+  const [isChecked, setIsChecked] = useState(false);
   const dataPendaftaran = useSelector((state) => state.pendaftaran.dataPendaf);
   console.log("data xxxxxx", dataPendaftaran);
 
@@ -76,6 +80,44 @@ function FormPendaftaran2() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation
+    if (
+      !formKetersediaan ||
+      !formData2.durasiAwal ||
+      !formData2.durasiAkhir ||
+      !formData2.suratRekomendasi ||
+      !formData2.cv
+    ) {
+      toast.warn("Harap lengkapi semua field yang diperlukan!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      return; // Tambahkan return agar fungsi berhenti jika validasi gagal
+    }
+
+    // Validation
+    if (!isChecked) {
+      toast.warn("Harap centang syarat dan ketentuan!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      return; // Tambahkan return agar fungsi berhenti jika validasi gagal
+    }
+
+    // Prepare data
     let data = {
       available_space: formKetersediaan,
       first_period: formData2?.durasiAwal,
@@ -84,7 +126,10 @@ function FormPendaftaran2() {
       cv: formData2?.cv,
       portofolio: formData2?.portofolio,
     };
+
     console.log("data handle submit", data);
+
+    // Dispatch action
     dispatch(postPendaftaranMagang(data, navigate));
   };
 
@@ -346,13 +391,16 @@ function FormPendaftaran2() {
                 <label className="inline-flex items-center">
                   <input
                     type="checkbox"
-                    className="form-checkbox h-4 w-4 text-red-600"
+                    id="terms"
+                    checked={isChecked}
+                    onChange={(e) => setIsChecked(e.target.checked)}
+                    className="mr-2"
                   />
                   <span className="ml-2 text-sm text-gray-700">
                     Saya Menyetujui{" "}
-                    <a href="#" className="text-blue-500">
+                    <Link to="/syaratdanketentuan" className="text-blue-500">
                       Syarat dan Ketentuan
-                    </a>
+                    </Link>
                   </span>
                 </label>
               </div>

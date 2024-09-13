@@ -3,6 +3,8 @@ import {
   setDataFormPendaftaran,
   setPendaf,
 } from "../Reducers/pendaftaranMagangReducers";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const getDataPendaftaran = () => async (dispatch, getState) => {
   try {
@@ -78,14 +80,37 @@ export const postPendaftaranMagang =
       );
       console.log("response postPendaftaranMagang", response);
 
-      // Check for successful response
-      if (response.status === 200) {
-        console.log("Data profile login:", response.data); // Debug log
-        dispatch(setDataFormPendaftaran(response.data));
-        navigate("/");
-      }
-    } catch (error) {
-      // Handle error and dispatch error state
-      console.error("Error fetching data:", error);
+     // Check for successful response
+     if (response.status === 200) {
+      console.log("Data profile login:", response.data); // Debug log
+      dispatch(setDataFormPendaftaran(response.data));
+      navigate("/");
+
+      // Show success toast notification
+      toast.success("Pendaftaran magang berhasil!", {
+        position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+      });
     }
-  };
+  } catch (error) {
+    // Handle error and show error toast notification
+    console.error("Error fetching data:", error);
+
+    toast.error("Gagal melakukan pendaftaran magang. Coba lagi nanti!", {
+      position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+    });
+  }
+};

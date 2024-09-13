@@ -3,7 +3,8 @@ import React from "react";
 import { Provider } from "react-redux"; // Tambahkan import ini
 import { store } from "./redux/store"; // Pastikan sudah mengimpor store
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Beranda from "./Pages/Beranda";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
@@ -21,6 +22,7 @@ import AkunAdmin from "./Pages_Admin/akunAdmin";
 import LoginAdmin from "./Pages_Admin/loginAdmin";
 import DataPengguna from "./Pages_Admin/DataPengguna";
 import EditProfilAdmin from "./Pages_Admin/EditProfilAdmin";
+import SyaratKetentuan from "./Pages/syaratKetentuan";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -92,11 +94,17 @@ export default function App() {
       path: "editprofiladmin",
       element: <EditProfilAdmin />,
     },
+    {
+      path: "syaratdanketentuan",
+      element: <SyaratKetentuan />,
+    },
   ]);
 
   return (
     <Provider store={store}>
+      <ToastContainer />
       <RouterProvider router={router} />
+      
     </Provider>
   );
 }
