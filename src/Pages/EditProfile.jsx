@@ -204,8 +204,8 @@ const EditProfilePage = () => {
       city_domicile: formData.kotaDomisili,
       province_ktp: formData.provinsiKTP,
       city_ktp: formData.kotaKTP,
-      // photo: formData.fotoProfil,
-      // major: formData.jurusan,
+      photo: formData.kotaKTP,
+      telp_user: formData.noTelp,
     };
     e.preventDefault();
     console.log("Data Handle Submit", data);
@@ -216,6 +216,8 @@ const EditProfilePage = () => {
     formData.fotoProfil instanceof File
       ? URL.createObjectURL(formData.fotoProfil)
       : Profile;
+
+      
 
   return (
     <div className="bg-[#D24545] min-h-screen flex flex-col">

@@ -70,9 +70,9 @@ function HasilDaftarMagang() {
   const updateUserStatus = async (userId, status) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/updateUserStatus2",
+        "http://localhost:5000/api/users/status2",
         {
-          method: "POST",
+          method: "put",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${getToken()}`,
@@ -97,13 +97,25 @@ function HasilDaftarMagang() {
   const currentData = pesertaData;
   const totalPages = Math.ceil(pesertaData.length / PAGE_SIZE);
   console.log("currentData", currentData);
-  console.log("currentData", currentData)
+  console.log("currentData", currentData);
 
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
     return dateString
       ? new Date(dateString).toLocaleDateString("id-ID", options)
       : "Kosong";
+  };
+
+  const handleOpenPDF = async (filePath) => {
+    try {
+      const response = await fetch(filePath);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank"); // Membuka file PDF di tab baru
+    } catch (error) {
+      console.error("Error fetching the PDF:", error);
+      console.log("filePath", filePath);
+    }
   };
 
   return (
@@ -168,14 +180,18 @@ function HasilDaftarMagang() {
                       {peserta?.Regist?.available_space || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <a
-                        href={peserta.Regist?.recommend_letter ? `C:\Users\LENOVO\OneDrive\Documents\prajagamer\Backend\ ${peserta.Regist.recommend_letter}` : "#"}
+                      <button
                         className="text-blue-500 hover:underline"
+                        onClick={() =>
+                          handleOpenPDF(
+                            `prajagamer/Backend/ ${peserta.Regist.recommend_letter}`
+                          )
+                        }
                       >
                         {peserta.Regist.recommend_letter
                           ? "Lihat Surat"
                           : "Tidak tersedia"}
-                      </a>
+                      </button>
                     </td>
                     <td className="py-2 px-4 border-b">
                       <a
