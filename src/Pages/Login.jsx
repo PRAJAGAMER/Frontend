@@ -11,11 +11,26 @@ const Login = () => {
   const [nik, setNik] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [nikError, setNikError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    let hasError = false;
+
+    if (!nik || nik.trim() === "") {
+      setNikError("NIK tidak boleh kosong");
+      hasError = true;
+    }
+
+    if (!password || password.trim() === "") {
+      setPasswordError("Password tidak boleh kosong");
+      hasError = true;
+    }
+    if (hasError) return;
+
     let data = { nik, password };
     dispatch(login(data, navigate));
   };
@@ -65,7 +80,7 @@ const Login = () => {
 
           {error && <p className="text-red-600 text-center">{error}</p>}
 
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} noValidate>
             <div className="mb-4">
               <label htmlFor="nik" className="block text-gray-700 text-left">
                 Nomor Induk Kependudukan
@@ -75,10 +90,14 @@ const Login = () => {
                 id="nik"
                 value={nik}
                 onChange={(e) => setNik(e.target.value)}
-                className="w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]"
+                className={`w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
+                  ${nikError ? "border-red-500" : "border-gray-300"}`}
                 placeholder="NIK"
                 required
               />
+              {nikError && (
+                <p className="text-red-500 text-sm mt-[5px]">{nikError}</p>
+              )}
             </div>
 
             {/* Password Input */}
@@ -94,7 +113,8 @@ const Login = () => {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12"
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12
+                  ${passwordError ? "border-red-500" : "border-gray-300"}`}
                 placeholder="Password"
                 required
               />
@@ -109,8 +129,11 @@ const Login = () => {
                   <EyeIcon className="w-5 h-5" />
                 )}
               </button>
+              <div className="absolute -bottom-6 text-red-500 text-sm">
+                {passwordError && <p>{passwordError}</p>}
+              </div>
             </div>
-            <button className="w-full p-3 bg-[#D24545] text-white font-bold rounded-lg hover:bg-red-700 transition">
+            <button className="w-full p-3 bg-[#D24545] text-white font-bold rounded-lg hover:bg-red-700 transition mt-5">
               Masuk
             </button>
           </form>

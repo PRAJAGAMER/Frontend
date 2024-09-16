@@ -1,5 +1,7 @@
 import axios from "axios";
 import { setToken, setUser } from "../Reducers/loginReducers";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const login = (data, navigate) => async (dispatch, getState) => {
   console.log(data);
@@ -13,14 +15,59 @@ export const login = (data, navigate) => async (dispatch, getState) => {
         },
       }
     );
-    console.log("response", response);
-    dispatch(setToken(response.data.token));
-    dispatch(setUser(response.data.user));
-    navigate("/")
+    if (response.status === 200) {
+      dispatch(setToken(response.data.token));
+      dispatch(setUser(response.data.user));
+      toast.success("Login Berhasil", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      navigate("/");
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log(error.message);
-      return;
+      if (error.response) {
+        if (error.response.status === 401) {
+          toast.error("Login gagal! Email atau password salah.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        } else if (error.response.status === 500) {
+          toast.error("Terjadi kesalahan server. Silakan coba lagi nanti.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        } else {
+          toast.error("Terjadi kesalahan. Periksa koneksi Anda.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      }
     }
   }
 };
@@ -35,7 +82,7 @@ export const register = (data, navigate) => async (dispatch, getState) => {
       data,
       {
         headers: {
-         "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
       }
     );
