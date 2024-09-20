@@ -89,7 +89,7 @@ const DashboardAdmin = () => {
   };
 
   const handleUpdateStatus = async (id, status, index) => {
-    console.log("userId: " + id);
+    console.log("userId ok: " + id);
     console.log("status: " + status);
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
@@ -130,6 +130,16 @@ const DashboardAdmin = () => {
     // Kirim pesan WA
     sendWhatsAppMessage(notelp, status);
   };
+
+   // Membatasi data pelamar hanya 5 terbaru
+  const limitedApplicantsData = applicantsData
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.user.createdAt) - new Date(a.user.createdAt)
+    ) // Urutkan berdasarkan tanggal terbaru
+    .slice(0, 5); // Ambil 5 data terbaru
+
 
   return (
     <div className="flex flex-col h-screen">

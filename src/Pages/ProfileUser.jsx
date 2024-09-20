@@ -41,8 +41,8 @@ const ProfilePage = () => {
             style={{ transform: "translate(50px, -120px)" }}
           >
             <img
-              className="w-60 rounded-full"
-              src={dataProfil?.photo}
+              className="w-60 h-60 rounded-full shadow-lg"
+              src={'http://localhost:5000/uploads/'+dataProfil?.photo}
               alt="Profile"
             />
           </div>
