@@ -34,7 +34,7 @@ export const login = (data, navigate) => async (dispatch, getState) => {
     if (axios.isAxiosError(error)) {
       if (error.response) {
         if (error.response.status === 401) {
-          toast.error("Login gagal! Email atau password salah.", {
+          toast.error("Login gagal! NIK atau password salah.", {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,

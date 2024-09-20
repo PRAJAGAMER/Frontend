@@ -34,37 +34,105 @@ const DataPengguna = () => {
   }, [token]);
 
   const handleExportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(pesertaData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Data Pelamar Magang");
-    XLSX.writeFile(wb, "Data_Pelamar_Magang.xlsx");
+    const exportData = pesertaData.map((peserta) => ({
+      Nama: peserta.name,
+      NIM: peserta.University.nim || "Kosong",
+      NIK: peserta.Profile.nik || "Kosong",
+      Email: peserta.email,
+      "No. Telp": peserta.Profile.telp_user || "Kosong",
+      "Asal Pendidikan": peserta.University.univ_name || "Kosong",
+      Jurusan: peserta.University.major || "Kosong",
+      Foto: peserta.Profile.photo ? "Ada" : "Tidak Ada",
+      "Curriculum Vitae": peserta.Regist.cv ? "Ada" : "Tidak Ada",
+      "Transkip Nilai": peserta.Regist.score_list ? "Ada" : "Tidak Ada",
+    }));
+
+    // Buat worksheet dan workbook
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Pengguna");
+
+    // Simpan file Excel
+    XLSX.writeFile(workbook, "Data_Pengguna_Magang.xlsx");
   };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const handleStatusChange = async (userId, status) => {
+  //PAgination
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const currentData = pesertaData.slice(startIndex, startIndex + PAGE_SIZE);
+  const totalPages = Math.ceil(pesertaData.length / PAGE_SIZE);
+
+  //kirim DAta WA
+  const handleUpdateStatus = async (id, status, index) => {
+    console.log("userId: " + id);
+    console.log("status: " + status);
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin";
+      return;
+    }
+  
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/status",
-        { userId, status },
+      // Request untuk mengupdate status akun
+      const response = await axios.put(
+        "http://localhost:5000/api/users/status", // Sesuaikan URL jika menggunakan endpoint live
+        { userId: id, status: status },
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("User status updated:", response.data);
-      // Optionally, fetch data again to update UI
+  
+      console.log("Response status update: ", response);
+  
+      // Jika response sukses, fetch ulang data peserta
+      if (response.status === 200) {
+        const updatedData = [...pesertaData];
+        updatedData[index].status = status;
+        setPesertaData(updatedData);
+        
+        // Kirim pesan WhatsApp setelah update status sukses
+        const notelp = pesertaData[index].Profile.telp_user;
+        sendWhatsAppMessage(notelp, status);
+      }
     } catch (error) {
-      console.error("Error updating user status:", error);
+      console.error("Error updating status:", error);
     }
   };
-
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentData = pesertaData.slice(startIndex, startIndex + PAGE_SIZE);
-  const totalPages = Math.ceil(pesertaData.length / PAGE_SIZE);
+  
+  // Kirim pesan WhatsApp
+  const sendWhatsAppMessage = (phoneNumber, status) => {
+    if (!phoneNumber) {
+      console.error("Nomor telepon tidak ditemukan.");
+      return;
+    }
+  
+    let message = "";
+    if (status === "Accepted") {
+      message = `Selamat, Pengajuan akun Anda diterima. Silahkan login untuk melanjutkan pendaftaran!`;
+    } else if (status === "Rejected") {
+      message = `Maaf, Pengajuan akun Anda ditolak. Silahkan perbaiki dokumen Anda!`;
+    }
+  
+    const formattedPhoneNumber = phoneNumber.startsWith("0")
+      ? `62${phoneNumber.slice(1)}`
+      : `62${phoneNumber}`;
+  
+    const whatsappURL = `https://api.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodeURIComponent(
+      message
+    )}`;
+  
+    console.log("Opening WhatsApp URL:", whatsappURL);
+    window.open(whatsappURL, "_blank"); // Membuka WhatsApp di tab baru
+  };
+  
 
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -112,10 +180,10 @@ const DataPengguna = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentData.map((peserta) => {
-                    console.log(peserta); // Debug data peserta
+                  {currentData.map((peserta, index) => {
+                    console.log("DATA PESER",peserta); // Debug data peserta
                     return (
-                      <tr key={peserta.id}>
+                      <tr key={index}>
                         <td className="py-2 px-4 border-b">{peserta.name}</td>
                         <td className="py-2 px-4 border-b">
                           {peserta.University.nim}
@@ -136,7 +204,10 @@ const DataPengguna = () => {
                         <td className="py-2 px-4 border-b">
                           {peserta.Profile.photo ? (
                             <a
-                              href={peserta.Profile.photo}
+                              href={
+                                "http://localhost:5000/uploads/" +
+                                peserta.Profile.photo
+                              }
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-500 hover:underline"
@@ -149,9 +220,12 @@ const DataPengguna = () => {
                         </td>
 
                         <td className="py-2 px-4 border-b">
-                          {peserta.cv ? (
+                          {peserta.Regist.cv ? (
                             <a
-                              href={`/path/to/cvs/${peserta.Regist.cv}`}
+                              href={
+                                "http://localhost:5000/uploads/" +
+                                peserta.Regist.cv
+                              }
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-500 hover:underline"
@@ -163,9 +237,12 @@ const DataPengguna = () => {
                           )}
                         </td>
                         <td className="py-2 px-4 border-b">
-                          {peserta.transkripNilai ? (
+                          {peserta.Regist.score_list ? (
                             <a
-                              href={`/path/to/transkrip/${peserta.Regist.score_list}`}
+                              href={
+                                "http://localhost:5000/uploads/" +
+                                peserta.Regist.score_list
+                              }
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-500 hover:underline"
@@ -183,7 +260,7 @@ const DataPengguna = () => {
                         <td className="py-2 px-4 border-b flex flex-row w-72">
                           <button
                             onClick={() =>
-                              handleStatusChange(peserta.id, "Verifying")
+                              handleUpdateStatus(peserta.user_id, "Verifying", index)
                             }
                             className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600 hover:underline"
                           >
@@ -191,7 +268,11 @@ const DataPengguna = () => {
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusChange(peserta.id, "NotVerifying")
+                              handleUpdateStatus(
+                                peserta.user_id,
+                                "NotVerifying",
+                                index
+                              )
                             }
                             className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600 hover:underline"
                           >

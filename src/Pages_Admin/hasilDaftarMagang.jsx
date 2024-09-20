@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import HeaderAdmin from "../ComponentsAdmin/HeaderAdmin";
+import axios from "axios";
 import * as XLSX from "xlsx";
 
 const PAGE_SIZE = 10;
@@ -61,61 +62,118 @@ function HasilDaftarMagang() {
   };
 
   const handleExportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(pesertaData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Data Pelamar Magang");
-    XLSX.writeFile(wb, "Data_Pelamar_Magang.xlsx");
+    const exportData = pesertaData.map((peserta) => ({
+      Nama: peserta.name,
+      NIM: peserta.University.nim || "Kosong",
+      NIK: peserta.Profile.nik || "Kosong",
+      Email: peserta.email,
+      "No. Telp": peserta.Profile.telp_user || "Kosong",
+      "Asal Pendidikan": peserta.University.univ_name || "Kosong",
+      Jurusan: peserta.University.major || "Kosong",
+      "Ketersediaan Penempatan": peserta?.Regist?.available_space || "Kosong",
+      "Surat Rekomendasi":
+        peserta.Regist.recommend_letter ? "Ada" : "Tidak Ada",
+      "Curriculum Vitae": peserta.Regist.cv ? "Ada" : "Tidak Ada",
+      "Link Portofolio": peserta.Regist.portofolio ? "Ada" : "Tidak Ada",
+      "Durasi Awal Magang": formatDate(peserta.Regist.first_period),
+      "Durasi Akhir Magang": formatDate(peserta.Regist.last_period),
+      "Tanggal Pengajuan": formatDate(peserta.Regist.updateAt),
+      "Status Lamaran": peserta.status,
+    }));
+
+    // Buat worksheet dan workbook
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Pelamar");
+
+    // Simpan file Excel
+    XLSX.writeFile(workbook, "Data_Pelamar_Magang.xlsx");
   };
 
-  const updateUserStatus = async (userId, status) => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/users/status2",
-        {
-          method: "put",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getToken()}`,
-          },
-          body: JSON.stringify({ userId, status }),
-        }
-      );
-      const result = await response.json();
-      if (response.ok) {
-        alert(`Status updated to ${status}`);
-        // Refresh data after update
-        fetchPesertaData();
-      } else {
-        alert(`Error: ${result.error}`);
-      }
-    } catch (error) {
-      console.error("Error updating status:", error);
-    }
-  };
+
 
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const currentData = pesertaData;
   const totalPages = Math.ceil(pesertaData.length / PAGE_SIZE);
   console.log("currentData", currentData);
-  console.log("currentData", currentData);
+
+
+  const sendWhatsAppMessage = (phoneNumber, status) => {
+    // Cek apakah phoneNumber tidak undefined atau kosong
+    if (!phoneNumber) {
+      console.error("Nomor telepon tidak ditemukan.");
+      return;
+    }
+
+    // Pesan yang akan dikirim ke WhatsApp
+    let message = "";
+
+    if (status === "Accepted") {
+      message = `Selamat, lamaran magang Anda telah diterima. Terima kasih telah mendaftar!`;
+    } else if (status === "Rejected") {
+      message = `Maaf, lamaran magang Anda tidak dapat kami terima. Terima kasih telah mendaftar dan tetap semangat!`;
+    }
+  
+    const formattedPhoneNumber = phoneNumber.startsWith("0")
+      ? `62${phoneNumber.slice(1)}`
+      : `62${phoneNumber}`;
+  
+    const whatsappURL = `https://api.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodeURIComponent(
+      message
+    )}`;
+  
+    console.log("Opening WhatsApp URL:", whatsappURL); // Tambahkan ini untuk memastikan URL sudah benar
+    window.open(whatsappURL, "_blank"); // Membuka WhatsApp di tab baru
+  };
+
+  const handleUpdateStatus = async (id, status, index) => {
+    console.log("userId: " + id);
+    console.log("status: " + status);
+    const token = localStorage.getItem("token");
+    let data = { userId: id, status: status };
+    console.log("data: ", data);
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin";
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        "http://localhost:5000/api/users/status2",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("response: " + response);
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+
+    const response = await axios.get("http://localhost:5000/api/users2", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const notelp = response.data[index].Profile.telp_user;
+    console.log("notelp: ", notelp);
+
+    // Kirim pesan WA
+    sendWhatsAppMessage(notelp, status);
+  };
 
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
     return dateString
       ? new Date(dateString).toLocaleDateString("id-ID", options)
       : "Kosong";
-  };
-
-  const handleOpenPDF = async (filePath) => {
-    try {
-      const response = await fetch(filePath);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank"); // Membuka file PDF di tab baru
-    } catch (error) {
-      console.error("Error fetching the PDF:", error);
-      console.log("filePath", filePath);
-    }
   };
 
   return (
@@ -157,8 +215,8 @@ function HasilDaftarMagang() {
                 </tr>
               </thead>
               <tbody>
-                {currentData.map((peserta) => (
-                  <tr key={peserta.id}>
+                {currentData.map((peserta, index) => (
+                  <tr key={index}>
                     <td className="py-2 px-4 border-b">{peserta.name}</td>
                     <td className="py-2 px-4 border-b">
                       {peserta.University.nim || "Kosong"}
@@ -180,36 +238,46 @@ function HasilDaftarMagang() {
                       {peserta?.Regist?.available_space || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <button
-                        className="text-blue-500 hover:underline"
-                        onClick={() =>
-                          handleOpenPDF(
-                            `prajagamer/Backend/ ${peserta.Regist.recommend_letter}`
-                          )
-                        }
-                      >
-                        {peserta.Regist.recommend_letter
-                          ? "Lihat Surat"
-                          : "Tidak tersedia"}
-                      </button>
+                      {peserta.Regist.recommend_letter ? (
+                        <a
+                          href={'http://localhost:5000/uploads/'+peserta.Regist.recommend_letter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                          >
+                            Lihat Surat Rekomendasi
+                            </a>
+                      ) : (
+                        "file tidak tersedia"
+                      )}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <a
-                        href={peserta.Regist.cv || "#"}
-                        className="text-blue-500 hover:underline"
-                      >
-                        {peserta.Regist.cv ? "Lihat CV" : "Tidak tersedia"}
-                      </a>
+                      {peserta.Regist.cv ? (
+                        <a
+                          href={'http://localhost:5000/uploads/'+peserta.Regist.cv}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                          >
+                            Lihat cv
+                            </a>
+                      ) : (
+                        "file tidak tersedia"
+                      )}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <a
-                        href={peserta.Regist.portofolio || "#"}
-                        className="text-blue-500 hover:underline"
-                      >
-                        {peserta.Regist.portofolio
-                          ? "Lihat Portofolio"
-                          : "Tidak tersedia"}
-                      </a>
+                      {peserta.Regist.portofolio ? (
+                        <a
+                          href={'http://localhost:5000/uploads/'+peserta.Regist.portofolio}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                          >
+                            Lihat portofolio
+                            </a>
+                      ) : (
+                        "file tidak tersedia"
+                      )}
                     </td>
                     <td className="py-2 px-4 border-b">
                       {formatDate(peserta.Regist.first_period)}
@@ -224,13 +292,25 @@ function HasilDaftarMagang() {
                     <td className="py-2 px-4 border-b flex flex-row w-72">
                       <button
                         className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600 hover:underline"
-                        onClick={() => updateUserStatus(peserta.id, "Accepted")}
+                        onClick={() =>
+                          handleUpdateStatus(
+                            peserta.user_id,
+                            "Accepted",
+                            index
+                          )
+                        }
                       >
                         Terima
                       </button>
                       <button
                         className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600 hover:underline"
-                        onClick={() => updateUserStatus(peserta.id, "Rejected")}
+                        onClick={() =>
+                          handleUpdateStatus(
+                            peserta.user_id,
+                            "Rejected",
+                            index
+                          )
+                        }
                       >
                         Tolak
                       </button>

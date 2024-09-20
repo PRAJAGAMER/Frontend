@@ -3,48 +3,114 @@ import axios from "axios";
 import Photo from "../assets/Pictures/disdukcapil.png";
 import Logo from "../assets/Pictures/logodisdukcapil.png";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid"; // Import icons for eye
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginAdmin = () => {
   const [nip, setNip] = useState("");
   const [password, setPassword] = useState("");
+  const [nipError, setNipError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(""); // Reset error message
+    setNipError("");
+    setPasswordError("");
+
+    let hasError = false;
+
+    if (!nip || nip.trim() === "") {
+      setNipError("NIP tidak boleh kosong");
+      hasError = true;
+    }
+
+    if (!password || password.trim() === "") {
+      setPasswordError("Password tidak boleh kosong");
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     try {
       // Login request
-      const loginResponse = await axios.post("http://localhost:5000/api/admin/login", {
-        nip,
-        password,
-      });
+      const loginResponse = await axios.post(
+        "http://localhost:5000/api/admin/login",
+        {
+          nip,
+          password,
+        }
+      );
+ if (loginResponse.status === 200) {
+    const token = loginResponse.data.token;
+    localStorage.setItem("token", token);
 
-      // Simpan token ke local storage
-      const token = loginResponse.data.token;
-      localStorage.setItem("token", token);
+    const adminResponse = await axios.get(
+      "http://localhost:5000/api/admins",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { nip },
+      }
+    );
 
-      // Setelah login, fetch data admin berdasarkan email
-      const adminResponse = await axios.get("http://localhost:5000/api/admins", {
-        headers: {
-          Authorization: `Bearer ${token}`, // Gunakan token untuk authorization
-        },
-        params: { nip }, // Kirim email sebagai parameter
-      });
+    const adminName = adminResponse.data.adminName || adminResponse.data.name || "Admin";
+    localStorage.setItem("adminName", adminName);
 
-      // Logging respons API admin
-      console.log("Admin Response Data:", adminResponse.data);
+    // Toast sukses
+    toast.success("Login Berhasil", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
 
-      // Simpan adminName ke local storage
-      const adminName = adminResponse.data.adminName || adminResponse.data.name || "Admin";
-      localStorage.setItem("adminName", adminName);
-
-      // Redirect ke dashboard admin
-      window.location.href = "/admin";
-    } catch (err) {
-      console.error("Login failed:", err.response ? err.response.data : err.message);
-      setError(err.response ? err.response.data.error : "An error occurred during login.");
+    window.location.href = "/admin";
+  }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            toast.error("Login gagal! NIP atau password salah.", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          } else if (error.response.status === 500) {
+            toast.error("Terjadi kesalahan server. Silakan coba lagi nanti.", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          }
+        } else {
+          toast.error("Terjadi kesalahan. Periksa koneksi Anda.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      }
     }
   };
 
@@ -63,7 +129,10 @@ const LoginAdmin = () => {
       </div>
 
       {/* Bagian Formulir */}
-      <div className="relative flex lg:hidden w-full h-screen bg-cover bg-center" style={{ backgroundImage: `url(${Photo})` }}>
+      <div
+        className="relative flex lg:hidden w-full h-screen bg-cover bg-center"
+        style={{ backgroundImage: `url(${Photo})` }}
+      >
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
@@ -94,22 +163,30 @@ const LoginAdmin = () => {
               <input
                 type="text"
                 id="nip"
-                className="w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]"
+                className={`w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
+                  ${nipError ? "border-red-500" : "border-gray-300"}`}
                 placeholder="NIP"
                 value={nip}
                 onChange={(e) => setNip(e.target.value)}
                 required
               />
+               {nipError && (
+                <p className="text-red-500 text-sm mt-[5px]">{nipError}</p>
+              )}
             </div>
             <div className="mb-6 relative">
-              <label htmlFor="password" className="block text-gray-700 text-left">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-left"
+              >
                 Password
               </label>
               <div className="relative w-full">
                 <input
                   type={showPassword ? "text" : "password"} // Show password as text if showPassword is true
                   id="password"
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12"
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12
+                    ${passwordError ? "border-red-500" : "border-gray-300"}`}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -127,9 +204,15 @@ const LoginAdmin = () => {
                     <EyeIcon className="w-5 h-5" /> // Icon when password is hidden
                   )}
                 </button>
+                <div className="absolute -bottom-6 text-red-500 text-sm">
+                  {passwordError && <p>{passwordError}</p>}
+                </div>
               </div>
             </div>
-            <button type="submit" className="w-full p-3 bg-[#D24545] text-white font-bold rounded-lg hover:bg-red-700 transition">
+            <button
+              type="submit"
+              className="w-full p-3 bg-[#D24545] text-white font-bold rounded-lg hover:bg-red-700 transition"
+            >
               Masuk
             </button>
           </form>

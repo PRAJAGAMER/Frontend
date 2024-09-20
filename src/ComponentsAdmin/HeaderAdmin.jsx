@@ -5,13 +5,14 @@ import SidebarAdmin from "./SidebarAdmin";
 
 const HeaderAdmin = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [adminName, setAdminName] = useState("");
+  const [adminName, setAdminName] = useState(""); // State untuk menyimpan nama admin
 
+  // Ambil nama admin dari localStorage ketika komponen pertama kali di-render
   useEffect(() => {
-    // Get admin name from localStorage
-    const name = localStorage.getItem("adminName");
-    if (name) {
-      setAdminName(name);
+    const storedAdminName = localStorage.getItem("adminName");
+    console.log("Stored Admin Name:", storedAdminName);
+    if (storedAdminName) {
+      setAdminName(storedAdminName);
     }
   }, []);
 
@@ -44,19 +45,16 @@ const HeaderAdmin = () => {
           onClick={toggleDropdown}
           className="flex items-center focus:outline-none"
         >
-          <span className="text-gray-600 mr-3 sm:text-sm">{adminName || "Admin"}</span>
+          {/* Menampilkan nama admin yang disimpan di localStorage */}
+          <span className="text-gray-600 mr-3 sm:text-sm">
+            {adminName}
+          </span>
           <UserCircleIcon className="h-10 w-10 text-gray-500 sm:h-8 sm:w-8" />
         </button>
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md">
-            <button
-              onClick={() => console.log("Akun clicked")}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-            >
-              Akun
-            </button>
             <button
               onClick={handleLogout}
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
