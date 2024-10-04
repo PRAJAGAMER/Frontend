@@ -37,7 +37,7 @@ const EditProfilePage = () => {
     namaPembimbing: dataEditProfile.name_supervisor,
     noTelpPembimbing: dataEditProfile.telp_supervisor,
     emailPembimbing: dataEditProfile.email_supervisor,
-    fotoProfil: dataEditProfile.photo,
+    fotoProfil: "http://localhost:5000/uploads/" + dataEditProfile.photo,
     provinsiDomisili: dataEditProfile.province_domicile,
     provinsiKTP: dataEditProfile.province_ktp,
   });
@@ -165,12 +165,11 @@ const EditProfilePage = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, fotoProfil: file });
-      setShowCropper(true);
-    }
+  const handleImageChange = (file) => {
+    setFormData((prev) => ({
+      ...prev, // Use previous state to spread current form data
+      fotoProfil: file, // Set the file as the new profile photo
+    }));
   };
 
   const handleCancelCrop = () => {
@@ -189,6 +188,11 @@ const EditProfilePage = () => {
     }
   };
 
+  const imageUrl =
+    formData.fotoProfil instanceof File
+      ? URL.createObjectURL(formData.fotoProfil)
+      : formData.fotoProfil || Profile;
+
   const handleSubmit = (e) => {
     let data = {
       ipk: formData.ipk,
@@ -204,18 +208,13 @@ const EditProfilePage = () => {
       city_domicile: formData.kotaDomisili,
       province_ktp: formData.provinsiKTP,
       city_ktp: formData.kotaKTP,
-      // photo: formData.fotoProfil,
-      // major: formData.jurusan,
+      photo: formData.fotoProfil,
+      telp_user: formData.noTelp,
     };
     e.preventDefault();
     console.log("Data Handle Submit", data);
     dispatch(postUpdateProfil(data, navigate));
   };
-
-  const imageUrl =
-    formData.fotoProfil instanceof File
-      ? URL.createObjectURL(formData.fotoProfil)
-      : Profile;
 
   return (
     <div className="bg-[#D24545] min-h-screen flex flex-col">
@@ -228,14 +227,14 @@ const EditProfilePage = () => {
           <div className="flex my-8 gap-4">
             <div className="relative justify-center mx-16">
               <img
-                src={formData.fotoProfil || imageUrl}
+                src={formData.fotoProfil}
                 alt="Foto Profil"
-                className="w-[300px] object-cover rounded-full"
+                className="w-[300px] h-[260px] object-cover rounded-full"
               />
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={(e) => handleImageChange(e.target.files[0])}
                 ref={imageInputRef}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />

@@ -43,6 +43,7 @@ export const postUpdateProfil =
         data,
         {
           headers: {
+              'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`, // Attach token here
           },
         }
