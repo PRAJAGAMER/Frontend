@@ -37,7 +37,7 @@ const EditProfilePage = () => {
     namaPembimbing: dataEditProfile.name_supervisor,
     noTelpPembimbing: dataEditProfile.telp_supervisor,
     emailPembimbing: dataEditProfile.email_supervisor,
-    fotoProfil: dataEditProfile.photo,
+    fotoProfil: "http://localhost:5000/uploads/" + dataEditProfile.photo,
     provinsiDomisili: dataEditProfile.province_domicile,
     provinsiKTP: dataEditProfile.province_ktp,
   });
@@ -165,12 +165,11 @@ const EditProfilePage = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, fotoProfil: file });
-      setShowCropper(true);
-    }
+  const handleImageChange = (file) => {
+    setFormData((prev) => ({
+      ...prev, // Use previous state to spread current form data
+      fotoProfil: file, // Set the file as the new profile photo
+    }));
   };
 
   const handleCancelCrop = () => {
@@ -189,6 +188,11 @@ const EditProfilePage = () => {
     }
   };
 
+  const imageUrl =
+    formData.fotoProfil instanceof File
+      ? URL.createObjectURL(formData.fotoProfil)
+      : formData.fotoProfil || Profile;
+
   const handleSubmit = (e) => {
     let data = {
       ipk: formData.ipk,
@@ -204,38 +208,33 @@ const EditProfilePage = () => {
       city_domicile: formData.kotaDomisili,
       province_ktp: formData.provinsiKTP,
       city_ktp: formData.kotaKTP,
-      // photo: formData.fotoProfil,
-      // major: formData.jurusan,
+      photo: formData.fotoProfil,
+      telp_user: formData.noTelp,
     };
     e.preventDefault();
     console.log("Data Handle Submit", data);
     dispatch(postUpdateProfil(data, navigate));
   };
 
-  const imageUrl =
-    formData.fotoProfil instanceof File
-      ? URL.createObjectURL(formData.fotoProfil)
-      : Profile;
-
   return (
     <div className="bg-[#D24545] min-h-screen flex flex-col">
       <Navbar />
-      <div className="w-[1100px] mx-auto bg-white rounded-2xl mt-32 mb-10 pb-6">
+      <div className=" w-full lg:w-[1100px] mx-auto bg-white rounded-2xl mt-32 mb-10 pb-6">
         <h1 className="text-3xl font-bold text-center py-8 border-b-2">
           Edit Profil
         </h1>
         <form onSubmit={handleSubmit} className="px-6">
-          <div className="flex my-8 gap-4">
+          <div className="lg:flex my-8 gap-4">
             <div className="relative justify-center mx-16">
               <img
-                src={formData.fotoProfil || imageUrl}
+                src={formData.fotoProfil}
                 alt="Foto Profil"
-                className="w-[300px] object-cover rounded-full"
+                className="w-[300px] h-[260px] object-cover rounded-full"
               />
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={(e) => handleImageChange(e.target.files[0])}
                 ref={imageInputRef}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
@@ -243,7 +242,7 @@ const EditProfilePage = () => {
                 <PencilSquareIcon className="h-10 text-gray-600" />
               </div>
             </div>
-            <div className="border rounded p-4 w-[750px] h-min">
+            <div className="border rounded  p-4 lg:w-[750px] h-min">
               <label className="font-semibold block mb-2 text-xl">
                 Kontak Pribadi
               </label>
@@ -270,7 +269,7 @@ const EditProfilePage = () => {
             </div>
           </div>
 
-          {showCropper && (
+          {/* {showCropper && (
             <div className="border rounded p-4 mb-4">
               <label className="font-semibold block mb-2 text-xl">
                 Crop Foto Profil
@@ -302,13 +301,14 @@ const EditProfilePage = () => {
                 </button>
               </div>
             </div>
-          )}
+          )} */}
 
+          {/* INFOMRASI DATA DIRI */}
           <div className="border rounded p-4">
             <label className="font-semibold block mb-2 text-xl">
               Informasi Data Pribadi
             </label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="lg:grid lg:grid-cols-2 lg:gap-4">
               <div>
                 <label className="block mb-2">Nama Lengkap</label>
                 <input
@@ -331,7 +331,7 @@ const EditProfilePage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="lg:grid lg:grid-cols-2 gap-4 mt-4">
               <div>
                 <label className="block mb-2">Nomor Induk Mahasiswa</label>
                 <input
@@ -364,7 +364,7 @@ const EditProfilePage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="lg:grid lg:grid-cols-2 gap-4 mt-4">
               <div>
                 <label className="font-semibold block mb-2 text-xl">
                   Alamat Domisili Tinggal
@@ -476,8 +476,8 @@ const EditProfilePage = () => {
               </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-4 my-8">
+{/* INFOMRASI DATA AKADEMIK */}
+          <div className="lg:grid lg:grid-cols-2 gap-4 my-8">
             <div className="border rounded p-4">
               <label className="font-semibold block mb-2 text-xl">
                 Informasi Akademik

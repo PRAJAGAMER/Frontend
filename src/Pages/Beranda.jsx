@@ -29,7 +29,7 @@ const Beranda = () => {
         />
         <div className="flex items-center flex-col max-md:mt-8">
           <div className="text-4xl lg:text-5xl text-white font-semibold">
-            Program Kerja dan Magang Merdeka
+            Praktik Kerja dan Magang Merdeka
           </div>
           <div className="text-xl lg:text-2xl pt-3 text-white font-semibold">
             Dinas Kependudukan dan Pencacatan Sipil Kota Semarang{" "}

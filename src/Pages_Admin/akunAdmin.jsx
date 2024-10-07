@@ -9,7 +9,7 @@ function AkunAdmin() {
 
   // Fungsi untuk fetch data admin dari server
   const fetchAdminData = async () => {
-    const token = localStorage.getItem('token'); // Ambil token dari local storage
+    const token = localStorage.getItem("token"); // Ambil token dari local storage
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
       window.location.href = "/loginadmin"; // Redirect to login page if not logged in
@@ -17,20 +17,20 @@ function AkunAdmin() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/admins', {
+      const response = await fetch("http://localhost:5000/api/admins", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Gagal mengambil data admin');
+        throw new Error("Gagal mengambil data admin");
       }
 
       const data = await response.json();
       setAdminData(data); // Set data admin ke state
     } catch (error) {
-      console.error('Error fetching admin data:', error);
+      console.error("Error fetching admin data:", error);
     }
   };
 
@@ -41,24 +41,24 @@ function AkunAdmin() {
 
   // Fungsi untuk menghapus admin
   const handleDelete = async (id) => {
-    const token = localStorage.getItem('token'); // Ambil token dari local storage
+    const token = localStorage.getItem("token"); // Ambil token dari local storage
 
     try {
       const response = await fetch(`http://localhost:5000/api/admin/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Gagal menghapus admin');
+        throw new Error("Gagal menghapus admin");
       }
 
       // Update state untuk menghapus admin
-      setAdminData(adminData.filter(admin => admin.id !== id));
+      setAdminData(adminData.filter((admin) => admin.id !== id));
     } catch (error) {
-      console.error('Error deleting admin:', error);
+      console.error("Error deleting admin:", error);
     }
   };
 
@@ -74,25 +74,24 @@ function AkunAdmin() {
 
   // Fungsi untuk menambahkan admin baru
   const handleAddAdmin = async (newAdmin) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     try {
       // Lakukan fetch ulang data admin setelah admin baru berhasil ditambahkan
-      const response = await fetch('http://localhost:5000/api/admins', {
+      const response = await fetch("http://localhost:5000/api/admins", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Gagal mengambil data admin setelah penambahan');
+        throw new Error("Gagal mengambil data admin setelah penambahan");
       }
 
       const updatedAdminData = await response.json();
       setAdminData(updatedAdminData); // Perbarui state dengan data admin terbaru
-
     } catch (error) {
-      console.error('Error fetching updated admin data:', error);
+      console.error("Error fetching updated admin data:", error);
     }
 
     handleCloseModal(); // Tutup modal setelah admin ditambahkan
@@ -131,11 +130,21 @@ function AkunAdmin() {
             <table className="min-w-full bg-white">
               <thead>
                 <tr>
-                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">Nama</th>
-                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">NIP</th>
-                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">No. Telp</th>
-                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">Email</th>
-                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">Aksi</th>
+                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                    Nama
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                    NIP
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                    No. Telp
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                    Email
+                  </th>
+                  <th className="py-2 px-4 border-b text-center text-sm font-semibold text-gray-600 ">
+                    Aksi
+                  </th>
                 </tr>
               </thead>
 
@@ -147,10 +156,10 @@ function AkunAdmin() {
                       <td className="py-2 px-4 border-b">{admin.nip}</td>
                       <td className="py-2 px-4 border-b">{admin.telp_admin}</td>
                       <td className="py-2 px-4 border-b">{admin.email}</td>
-                      <td className="py-2 px-4 border-b">
+                      <td className="py-2 border-b flex items-center justify-center">
                         <button
                           onClick={() => handleDelete(admin.id)}
-                          className="ml-2 text-red-500 hover:underline"
+                          className="ml-2 px-4 py-2 w-50 bg-red-500 text-white rounded hover:bg-red-600 flex justify-center items-center"
                         >
                           Hapus Akun
                         </button>
@@ -159,7 +168,9 @@ function AkunAdmin() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-4">Tidak ada data admin</td>
+                    <td colSpan="5" className="text-center py-4">
+                      Tidak ada data admin
+                    </td>
                   </tr>
                 )}
               </tbody>

@@ -77,6 +77,7 @@ function FormPendaftaran2() {
     durasiAwal: null,
     durasiAkhir: null,
   });
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -350,7 +351,7 @@ function FormPendaftaran2() {
                     rel="noopener noreferrer"
                     className="text-blue-500 mt-2 inline-block"
                   >
-                    Preview CV
+                    Preview Portofolio
                   </a>
                 )}
               </div>

@@ -17,19 +17,18 @@ const ProfilePage = () => {
     }
   });
   
-  useEffect(() => {
-    dispatch(getDataProfil());
-  }, []);
-
+useEffect(() => {
+  dispatch(getDataProfil());
+}, [dispatch]);
  
 
   const dataProfil = useSelector((state) => state.profil.dataProfilUser);
-  // console.log("data profile", dataProfil);
+  console.log("data profile baruuu  ", dataProfil);
 
   return (
-    <div className="bg-[#D24545] min-h-screen flex flex-col">
+    <div className="bg-[#D24545] min-h-screen flex flex-col ">
       <Navbar />
-      <div className="w-[1100px] mx-auto bg-[#f6f6f6] rounded-2xl mt-32 mb-10 pb-6">
+      <div className="w-full  lg:w-[1100px] mx-auto bg-[#f6f6f6] rounded-2xl mt-32 mb-10 pb-6">
         <div className="relative">
           <img
             src={ProfileBackground}
@@ -38,11 +37,11 @@ const ProfilePage = () => {
           />
           <div
             className="absolute"
-            style={{ transform: "translate(50px, -120px)" }}
+            style={{ transform: "translate(80px, -120px)" }}
           >
             <img
               className="w-60 h-60 rounded-full shadow-lg"
-              src={'http://localhost:5000/uploads/'+dataProfil?.photo}
+              src={'http://localhost:5000/uploads/'+ dataProfil?.photo}
               alt="Profile"
             />
           </div>
@@ -50,15 +49,14 @@ const ProfilePage = () => {
 
         {/* Profile Information */}
         <div
-          className="absolute"
-          style={{ transform: "translate(320px, 25px)" }}
+          className="absolute mx-5 mt-10 py-24 text-center px-20 lg:text-left lg:mt-1 lg:py-5 lg:ml-64 "
         >
           <h1 className="text-2xl font-semibold">{dataProfil?.name}</h1>
           <p className="text-gray-500">{dataProfil?.university}</p>
         </div>
 
         {/* Main Content */}
-        <div className="mt-[150px] px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-[250px]  lg:mt-[150px] px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Left Column */}
           <div>
             {/* Contact Info */}
