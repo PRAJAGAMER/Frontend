@@ -49,7 +49,7 @@ const HeaderAdmin = () => {
           <span className="text-gray-600 mr-3 sm:text-sm">
             {adminName}
           </span>
-          <UserCircleIcon className="h-10 w-10 text-gray-500 sm:h-8 sm:w-8" />
+          <UserCircleIcon className="h-12 w-12 text-[#D24545] sm:h-8 sm:w-8" />
         </button>
 
         {/* Dropdown Menu */}
