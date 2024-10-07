@@ -37,7 +37,7 @@ useEffect(() => {
           />
           <div
             className="absolute"
-            style={{ transform: "translate(50px, -120px)" }}
+            style={{ transform: "translate(80px, -120px)" }}
           >
             <img
               className="w-60 h-60 rounded-full shadow-lg"
@@ -49,7 +49,7 @@ useEffect(() => {
 
         {/* Profile Information */}
         <div
-          className="absolute mx-5  mt-10 py-24 text-center px-16 lg:text-left lg:mt-1 lg:py-5 lg: ml-64 "
+          className="absolute mx-5 mt-10 py-24 text-center px-20 lg:text-left lg:mt-1 lg:py-5 lg:ml-64 "
         >
           <h1 className="text-2xl font-semibold">{dataProfil?.name}</h1>
           <p className="text-gray-500">{dataProfil?.university}</p>
