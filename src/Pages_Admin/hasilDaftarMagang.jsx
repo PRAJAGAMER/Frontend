@@ -248,7 +248,7 @@ function HasilDaftarMagang() {
                             Lihat Surat Rekomendasi
                             </a>
                       ) : (
-                        "file tidak tersedia"
+                        "File Tidak Tersedia"
                       )}
                     </td>
                     <td className="py-2 px-4 border-b">
@@ -259,10 +259,10 @@ function HasilDaftarMagang() {
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
                           >
-                            Lihat cv
+                            Lihat CV
                             </a>
                       ) : (
-                        "file tidak tersedia"
+                        "File Tidak Tersedia"
                       )}
                     </td>
                     <td className="py-2 px-4 border-b">
@@ -273,10 +273,10 @@ function HasilDaftarMagang() {
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
                           >
-                            Lihat portofolio
+                            Lihat Portofolio
                             </a>
                       ) : (
-                        "file tidak tersedia"
+                        "Link Tidak Tersedia"
                       )}
                     </td>
                     <td className="py-2 px-4 border-b">

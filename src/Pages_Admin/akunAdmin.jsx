@@ -103,13 +103,11 @@ function AkunAdmin() {
       <HeaderAdmin className="relative z-20" />
 
       {/* Main Content */}
-      <div className="ml-64 pt-16 p-6 mt-5">
-        <div className="mt-8 bg-white p-4 rounded shadow">
-          <div className="flex justify-between items-center pb-5">
-            <h3 className="text-xl font-bold">Data Admin</h3>
-            <div>
-              {/* Button to open modal */}
-              <button
+      <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
+      <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">Akun Admin</h3>
+          {/* Button to open modal */}
+          <button
                 className="px-4 py-2 rounded-md bg-[#D24545] text-white font-semibold flex justify-center items-center gap-2"
                 onClick={handleOpenModal}
               >
@@ -118,6 +116,12 @@ function AkunAdmin() {
               </button>
 
               {/* Modal */}
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <div className="flex justify-between items-center pb-5">
+            
+            <div>
+              
               <ModalTambahAdmin
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
