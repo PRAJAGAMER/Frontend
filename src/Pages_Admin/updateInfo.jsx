@@ -10,8 +10,20 @@ function UpdateInfo() {
   const [bannerName, setBannerName] = useState("Lowongan"); // Banner name
   const [uploading, setUploading] = useState(false); // Loading state
   const fileInputRef = useRef(null);
+  const [error, setError] = useState(null); // State for error handling
 
   const getToken = () => localStorage.getItem("token");
+
+  // Function to check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin"; // Redirect to login page if no token
+    } else {
+      fetchUploadedBanner(); // Fetch the banner if token exists
+    }
+  }, []);
 
   // Fetch banner from the server on component mount or after upload
   const fetchUploadedBanner = async () => {
@@ -37,11 +49,6 @@ function UpdateInfo() {
       toast.error("Terjadi kesalahan saat memuat banner.");
     }
   };
-
-  useEffect(() => {
-    // Fetch the banner when the component mounts
-    fetchUploadedBanner();
-  }, []); // Empty array to run it only once on component mount
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -109,6 +116,7 @@ function UpdateInfo() {
       setUploading(false);
     }
   };
+
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
