@@ -6,7 +6,10 @@ import SidebarAdmin from "./SidebarAdmin";
 const HeaderAdmin = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [adminName, setAdminName] = useState(""); // State untuk menyimpan nama admin
+  const [isModalOpen, setIsModalOpen] = useState(false); // State untuk mengontrol modal
 
+  const openModal = () => setIsModalOpen(true); // Fungsi membuka modal
+  const closeModal = () => setIsModalOpen(false); // Fungsi menutup modal
   // Ambil nama admin dari localStorage ketika komponen pertama kali di-render
   useEffect(() => {
     const storedAdminName = localStorage.getItem("adminName");
@@ -55,12 +58,43 @@ const HeaderAdmin = () => {
         {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md">
-            <button
-              onClick={handleLogout}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-            >
-              Logout
-            </button>
+           <button
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                    onClick={() => setIsModalOpen(true)} // Menampilkan modal saat logout diklik
+                  >
+                    Logout
+                  </button>
+
+                  {isModalOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                      <div className="bg-white p-6 rounded-md shadow-md w-80">
+                        <h3 className="text-lg font-bold mb-4">
+                          Konfirmasi Logout
+                        </h3>
+                        <p>Apakah Anda yakin ingin keluar?</p>
+                        <div className="flex justify-end mt-6">
+                          {/* Tombol Batal */}
+                          <button
+                            onClick={() => setIsModalOpen(false)} // Menutup modal saat batal
+                            className="mr-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                          >
+                            Batal
+                          </button>
+
+                          {/* Tombol Logout */}
+                          <button
+                            onClick={() => {
+                              setIsModalOpen(false); // Tutup modal
+                              handleLogout(); // Fungsi logout dipanggil
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
           </div>
         )}
       </div>

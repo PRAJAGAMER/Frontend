@@ -10,15 +10,30 @@ function UpdateInfo() {
   const [bannerName, setBannerName] = useState("Lowongan"); // Banner name
   const [uploading, setUploading] = useState(false); // Loading state
   const fileInputRef = useRef(null);
+  const [error, setError] = useState(null); // State for error handling
 
   const getToken = () => localStorage.getItem("token");
+
+  // Function to check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin"; // Redirect to login page if no token
+    } else {
+      fetchUploadedBanner(); // Fetch the banner if token exists
+    }
+  }, []);
 
   // Fetch banner from the server on component mount or after upload
   const fetchUploadedBanner = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/banner?nameBanner=${bannerName}`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/banner?nameBanner=${bannerName}`,
+        {
+          method: "GET",
+        }
+      );
 
       if (response.ok) {
         const blob = await response.blob();
@@ -35,21 +50,18 @@ function UpdateInfo() {
     }
   };
 
-  useEffect(() => {
-    // Fetch the banner when the component mounts
-    fetchUploadedBanner();
-  }, []); // Empty array to run it only once on component mount
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && !["image/jpeg", "image/png"].includes(file.type)) {
-      toast.error("Format file tidak didukung. Harap unggah file dengan format .jpg atau .png.");
+      toast.error(
+        "Format file tidak didukung. Harap unggah file dengan format .jpg atau .png."
+      );
       setSelectedFile(null);
       setPreviewUrl(null);
       fileInputRef.current.value = "";
       return;
     }
-    
+
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file)); // Create a preview URL for the selected file
   };
@@ -105,80 +117,79 @@ function UpdateInfo() {
     }
   };
 
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <HeaderAdmin className="relative z-20" />
-
-      {/* Title Section */}
-      <div className="flex ml-64 mt-[86px] p-6">
-        <h3 className="text-xl font-bold">Kelola Banner Informasi Magang</h3>
-      </div>
-
-      <div className="flex-1 flex flex-row justify-between ml-64 px-6  bg-gray-100 rounded shadow">
-                {/* Left Side: Uploaded Banner */}
-        <div className="bg-white p-4  w-[49%] rounded shadow">
-          <h3 className="text-lg font-semibold mb-4">Banner Terunggah:</h3>
-          {uploadedBannerUrl ? (
-            <img
-              src={uploadedBannerUrl}
-              alt="Uploaded Banner"
-              className="w-full h-auto mb-2"
-            />
-          ) : (
-            <p>Belum ada banner yang diunggah.</p>
-          )}
-        </div>
-
-        {/* Right Side: Upload New Banner */}
-        <div className="bg-white p-4  w-[49%] rounded shadow">
-          <h3 className="text-lg font-semibold mb-4">Upload Banner Baru:</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                htmlFor="file-upload"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Pilih Foto
-              </label>
-              <input
-                id="file-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="mt-2 p-4 border border-gray-300 rounded w-full"
-                ref={fileInputRef}
+      <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
+        <h3 className="text-3xl font-bold mb-8">Data Pelamar</h3>
+        <div className="flex-1 flex flex-row justify-between">
+          {/* Left Side: Uploaded Banner */}
+          <div className="bg-white p-4  w-[49%] rounded shadow">
+            <h3 className="text-lg font-semibold mb-4">Banner Terunggah:</h3>
+            {uploadedBannerUrl ? (
+              <img
+                src={uploadedBannerUrl}
+                alt="Uploaded Banner"
+                className="w-full h-auto mb-2"
               />
-            </div>
-
-            {selectedFile && (
-              <div className="mb-4">
-                {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-full h-auto mb-2"
-                  />
-                )}
-                <p className="text-sm text-gray-600">
-                  File yang dipilih: {selectedFile.name}
-                </p>
-              </div>
+            ) : (
+              <p>Belum ada banner yang diunggah.</p>
             )}
+          </div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className={`bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 ${
-                  uploading ? "cursor-not-allowed opacity-50" : ""
-                }`}
-                disabled={uploading}
-              >
-                {uploading ? "Uploading..." : "Unggah"}
-              </button>
-            </div>
-          </form>
+          {/* Right Side: Upload New Banner */}
+          <div className="bg-white p-4  w-[49%] rounded shadow">
+            <h3 className="text-lg font-semibold mb-4">Upload Banner Baru:</h3>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label
+                  htmlFor="file-upload"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Pilih Foto
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="mt-2 p-4 border border-gray-300 rounded w-full"
+                  ref={fileInputRef}
+                />
+              </div>
+
+              {selectedFile && (
+                <div className="mb-4">
+                  {previewUrl && (
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-full h-auto mb-2"
+                    />
+                  )}
+                  <p className="text-sm text-gray-600">
+                    File yang dipilih: {selectedFile.name}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className={`bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 ${
+                    uploading ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                  disabled={uploading}
+                >
+                  {uploading ? "Uploading..." : "Unggah"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
+
       <ToastContainer />
     </div>
   );

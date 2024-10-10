@@ -16,7 +16,7 @@ import ProfileUser from "./Pages/ProfileUser";
 import EditProfile from "./Pages/EditProfile";
 import InfoPendaftaran from "./Pages/InfoPendaftaran";
 import DashboardAdmin from "./Pages_Admin/DashboardAdmin";
-import HasilDaftarMagang from "./Pages_Admin/hasilDaftarMagang";
+import DataPelamar from "./Pages_Admin/DataPelamar";
 import UpdateInfo from "./Pages_Admin/updateInfo";
 import AkunAdmin from "./Pages_Admin/akunAdmin";
 import LoginAdmin from "./Pages_Admin/loginAdmin";
@@ -71,8 +71,8 @@ export default function App() {
       element: <DashboardAdmin />,
     },
     {
-      path: "hasildaftarmagang",
-      element: <HasilDaftarMagang />,
+      path: "datapelamar",
+      element: <DataPelamar />,
     },
     {
       path: "updateinfo",
