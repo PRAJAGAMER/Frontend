@@ -9,6 +9,7 @@ import {
 import { Link } from "react-router-dom"; // Import Link dari react-router-dom
 import Sidebar from "../ComponentsAdmin/SidebarAdmin";
 import Header from "../ComponentsAdmin/HeaderAdmin";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid"; // Import Icon Search
 
 const DashboardAdmin = () => {
   const [applicantsData, setApplicantsData] = useState([]);
@@ -17,8 +18,7 @@ const DashboardAdmin = () => {
   const [acceptedApplicants, setAcceptedApplicants] = useState(0);
   const [rejectedApplicants, setRejectedApplicants] = useState(0);
   const [error, setError] = useState(null);
-
-  console.log("applicantsdata", applicantsData);
+  const [searchQuery, setSearchQuery] = useState(""); // State untuk search
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,40 +60,49 @@ const DashboardAdmin = () => {
     fetchData();
   }, []);
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Filter data berdasarkan query pencarian
+  const filteredApplicants = applicantsData.filter(
+    (applicant) =>
+      applicant.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      applicant.user.University?.univ_name
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      applicant.user.status.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const sendWhatsAppMessage = (phoneNumber, status) => {
-    // Cek apakah phoneNumber tidak undefined atau kosong
     if (!phoneNumber) {
       console.error("Nomor telepon tidak ditemukan.");
       return;
     }
 
-    // Pesan yang akan dikirim ke WhatsApp
     let message = "";
-
     if (status === "Accepted") {
       message = `Selamat, lamaran magang Anda telah diterima. Terima kasih telah mendaftar!`;
     } else if (status === "Rejected") {
       message = `Maaf, lamaran magang Anda tidak dapat kami terima. Terima kasih telah mendaftar dan tetap semangat!`;
     }
-  
+
     const formattedPhoneNumber = phoneNumber.startsWith("0")
       ? `62${phoneNumber.slice(1)}`
       : `62${phoneNumber}`;
-  
+
     const whatsappURL = `https://api.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodeURIComponent(
       message
     )}`;
-  
-    console.log("Opening WhatsApp URL:", whatsappURL); // Tambahkan ini untuk memastikan URL sudah benar
-    window.open(whatsappURL, "_blank"); // Membuka WhatsApp di tab baru
+
+    console.log("Opening WhatsApp URL:", whatsappURL);
+    window.open(whatsappURL, "_blank");
   };
 
   const handleUpdateStatus = async (id, status, index) => {
-    console.log("userId ok: " + id);
-    console.log("status: " + status);
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-    console.log("data: ", data);
+
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
       window.location.href = "/loginadmin";
@@ -101,7 +110,7 @@ const DashboardAdmin = () => {
     }
 
     try {
-      const response = await axios.put(
+      await axios.put(
         "http://localhost:5000/api/users/status2",
         data,
         {
@@ -111,8 +120,6 @@ const DashboardAdmin = () => {
           },
         }
       );
-
-      console.log("response: " + response);
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -125,21 +132,8 @@ const DashboardAdmin = () => {
     });
 
     const notelp = response.data[index].Profile.telp_user;
-    console.log("notelp: ", notelp);
-
-    // Kirim pesan WA
     sendWhatsAppMessage(notelp, status);
   };
-
-   // Membatasi data pelamar hanya 5 terbaru
-  const limitedApplicantsData = applicantsData
-    .slice()
-    .sort(
-      (a, b) =>
-        new Date(b.user.createdAt) - new Date(a.user.createdAt)
-    ) // Urutkan berdasarkan tanggal terbaru
-    .slice(0, 5); // Ambil 5 data terbaru
-
 
   return (
     <div className="flex flex-col h-screen">
@@ -180,16 +174,29 @@ const DashboardAdmin = () => {
                 </div>
               </div>
             </div>
+
             <div className="mt-8 bg-white p-4 rounded shadow relative">
               <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
                 <h3 className="text-xl font-bold">Data Pelamar</h3>
-                <Link
-                  to="/hasildaftarmagang"
-                  className="text-blue-500 hover:underline"
-                >
-                  Lihat Selengkapnya
-                </Link>
+                <div className="flex items-center">
+                  <div className="relative mr-4">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      placeholder="Cari pelamar..."
+                      className="pl-10 pr-4 py-2 border rounded"
+                    />
+                    <MagnifyingGlassIcon className="absolute left-2 top-2 w-5 h-5 text-gray-400" />
+                  </div>
+                  <Link to="/hasildaftarmagang">
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                      Lihat Selengkapnya
+                    </button>
+                  </Link>
+                </div>
               </div>
+
               <div className="overflow-x-auto">
                 <table className="min-w-full bg-white">
                   <thead>
@@ -212,8 +219,8 @@ const DashboardAdmin = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {applicantsData.length > 0 ? (
-                      applicantsData.map((peserta, index) => (
+                    {filteredApplicants.length > 0 ? (
+                      filteredApplicants.map((peserta, index) => (
                         <tr key={index}>
                           <td className="py-2 px-4 border-b">
                             {peserta.user.name}

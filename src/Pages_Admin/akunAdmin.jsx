@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import HeaderAdmin from "../ComponentsAdmin/HeaderAdmin";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import ModalTambahAdmin from "../ComponentsAdmin/modalTambahAdmin";
 
 function AkunAdmin() {
   const [adminData, setAdminData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State untuk search
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fungsi untuk fetch data admin dari server
@@ -97,6 +98,17 @@ function AkunAdmin() {
     handleCloseModal(); // Tutup modal setelah admin ditambahkan
   };
 
+  // Fungsi untuk search admin berdasarkan nama, NIP, atau email
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredData = adminData.filter((admin) =>
+    admin.admin_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    admin.nip.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    admin.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -104,32 +116,39 @@ function AkunAdmin() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
-      <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">Akun Admin</h3>
-          {/* Button to open modal */}
-          <button
-                className="px-4 py-2 rounded-md bg-[#D24545] text-white font-semibold flex justify-center items-center gap-2"
-                onClick={handleOpenModal}
-              >
-                <PlusCircleIcon className="h-5 w-5" />
-                Tambah Admin
-              </button>
-
-              {/* Modal */}
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <div className="flex justify-between items-center pb-5">
-            
-            <div>
-              
-              <ModalTambahAdmin
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onAddAdmin={handleAddAdmin} // Fungsi untuk menambah admin
+          <div className="flex items-center space-x-4">
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearch}
+                placeholder="Cari admin..."
+                className="pl-10 pr-4 py-2 border rounded"
               />
+              <MagnifyingGlassIcon className="absolute left-2 top-2 w-6 h-6 text-gray-400" />
             </div>
-          </div>
+            {/* Button to open modal */}
+            <button
+              className="px-4 py-2 rounded-md bg-[#D24545] text-white font-semibold flex justify-center items-center gap-2"
+              onClick={handleOpenModal}
+            >
+              <PlusCircleIcon className="h-5 w-5" />
+              Tambah Admin
+            </button>
 
+            {/* Modal */}
+            <ModalTambahAdmin
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onAddAdmin={handleAddAdmin} // Fungsi untuk menambah admin
+            />
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded shadow">
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead>
@@ -153,8 +172,8 @@ function AkunAdmin() {
               </thead>
 
               <tbody>
-                {adminData.length > 0 ? (
-                  adminData.map((admin) => (
+                {filteredData.length > 0 ? (
+                  filteredData.map((admin) => (
                     <tr key={admin.id}>
                       <td className="py-2 px-4 border-b">{admin.admin_name}</td>
                       <td className="py-2 px-4 border-b">{admin.nip}</td>

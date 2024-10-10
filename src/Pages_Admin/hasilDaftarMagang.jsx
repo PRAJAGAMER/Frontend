@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import HeaderAdmin from "../ComponentsAdmin/HeaderAdmin";
 import axios from "axios";
 import * as XLSX from "xlsx";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid"; // Import ikon search dari Heroicons
 
 const PAGE_SIZE = 10;
 
 function HasilDaftarMagang() {
   const [pesertaData, setPesertaData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); // State untuk search
 
-  // Get token from local storage
   const getToken = () => localStorage.getItem("token");
 
   const fetchPesertaData = async () => {
@@ -20,30 +21,19 @@ function HasilDaftarMagang() {
     }
 
     try {
-      console.log("Fetching data...");
       const response = await fetch("http://localhost:5000/api/users2", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Log the status of the response
-      console.log("Response status:", response.status);
-
-      // Check if response is ok
       if (response.ok) {
         const data = await response.json();
-
-        // Log the fetched data
-        console.log("Fetched data:", data);
-
         if (data) {
           setPesertaData(data);
         } else {
-          console.warn(
-            "Data applicantsList tidak ditemukan dalam respons API."
-          );
-          setPesertaData([]); // Set empty array if data is not found
+          console.warn("Data applicantsList tidak ditemukan dalam respons API.");
+          setPesertaData([]);
         }
       } else {
         console.error("Failed to fetch data:", response.statusText);
@@ -71,43 +61,52 @@ function HasilDaftarMagang() {
       "Asal Pendidikan": peserta.University.univ_name || "Kosong",
       Jurusan: peserta.University.major || "Kosong",
       "Ketersediaan Penempatan": peserta?.Regist?.available_space || "Kosong",
-      "Surat Rekomendasi":
-        peserta.Regist.recommend_letter ? "Ada" : "Tidak Ada",
+      "Surat Rekomendasi": peserta.Regist.recommend_letter ? "Ada" : "Tidak Ada",
       "Curriculum Vitae": peserta.Regist.cv ? "Ada" : "Tidak Ada",
-      "Link Portofolio": peserta.Regist.portofolio ? "Ada" : "Tidak Ada",
+      "Portofolio": peserta.Regist.portofolio ? "Ada" : "Tidak Ada",
       "Durasi Awal Magang": formatDate(peserta.Regist.first_period),
       "Durasi Akhir Magang": formatDate(peserta.Regist.last_period),
       "Tanggal Pengajuan": formatDate(peserta.Regist.updateAt),
       "Status Lamaran": peserta.status,
     }));
 
-    // Buat worksheet dan workbook
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Data Pelamar");
 
-    // Simpan file Excel
     XLSX.writeFile(workbook, "Data_Pelamar_Magang.xlsx");
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
 
+  const filteredData = pesertaData.filter((peserta) =>
+    peserta.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    peserta.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    peserta?.Profile?.nik?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    peserta?.University?.univ_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentData = pesertaData;
-  const totalPages = Math.ceil(pesertaData.length / PAGE_SIZE);
-  console.log("currentData", currentData);
+  const currentData = filteredData.slice(startIndex, startIndex + PAGE_SIZE);
+  const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
 
+  const formatDate = (dateString) => {
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return dateString
+      ? new Date(dateString).toLocaleDateString("id-ID", options)
+      : "Kosong";
+  };
 
   const sendWhatsAppMessage = (phoneNumber, status) => {
-    // Cek apakah phoneNumber tidak undefined atau kosong
     if (!phoneNumber) {
       console.error("Nomor telepon tidak ditemukan.");
       return;
     }
 
-    // Pesan yang akan dikirim ke WhatsApp
     let message = "";
-
     if (status === "Accepted") {
       message = `Selamat, lamaran magang Anda telah diterima. Terima kasih telah mendaftar!`;
     } else if (status === "Rejected") {
@@ -122,24 +121,20 @@ function HasilDaftarMagang() {
       message
     )}`;
   
-    console.log("Opening WhatsApp URL:", whatsappURL); // Tambahkan ini untuk memastikan URL sudah benar
-    window.open(whatsappURL, "_blank"); // Membuka WhatsApp di tab baru
+    window.open(whatsappURL, "_blank"); 
   };
 
   const handleUpdateStatus = async (id, status, index) => {
-    console.log("userId: " + id);
-    console.log("status: " + status);
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-    console.log("data: ", data);
+
     if (!token) {
-      setError("Anda belum login. Silakan login terlebih dahulu.");
       window.location.href = "/loginadmin";
       return;
     }
 
     try {
-      const response = await axios.put(
+      await axios.put(
         "http://localhost:5000/api/users/status2",
         data,
         {
@@ -149,8 +144,6 @@ function HasilDaftarMagang() {
           },
         }
       );
-
-      console.log("response: " + response);
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -163,17 +156,7 @@ function HasilDaftarMagang() {
     });
 
     const notelp = response.data[index].Profile.telp_user;
-    console.log("notelp: ", notelp);
-
-    // Kirim pesan WA
     sendWhatsAppMessage(notelp, status);
-  };
-
-  const formatDate = (dateString) => {
-    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-    return dateString
-      ? new Date(dateString).toLocaleDateString("id-ID", options)
-      : "Kosong";
   };
 
   return (
@@ -182,12 +165,24 @@ function HasilDaftarMagang() {
       <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">Data Pelamar</h3>
-          <button
-            onClick={handleExportToExcel}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-          >
-            Export to Excel
-          </button>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearch}
+                placeholder="Cari pelamar..."
+                className="pl-10 pr-4 py-2 border rounded"
+              />
+              <MagnifyingGlassIcon className="absolute left-2 top-2 w-6 h-6 text-gray-400" /> {/* Ikon pencarian */}
+            </div>
+            <button
+              onClick={handleExportToExcel}
+              className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Export to Excel
+            </button>
+          </div>
         </div>
         <div className="bg-white p-4 rounded shadow">
           <div className="overflow-x-auto">
@@ -201,12 +196,10 @@ function HasilDaftarMagang() {
                   <th className="py-2 px-4 border-b">No. Telp</th>
                   <th className="py-2 px-4 border-b">Asal Pendidikan</th>
                   <th className="py-2 px-4 border-b">Jurusan</th>
-                  <th className="py-2 px-4 border-b">
-                    Ketersediaan Penempatan
-                  </th>
+                  <th className="py-2 px-4 border-b">Ketersediaan Penempatan</th>
                   <th className="py-2 px-4 border-b">Surat Rekomendasi</th>
                   <th className="py-2 px-4 border-b">Curriculum Vitae</th>
-                  <th className="py-2 px-4 border-b">Link Portofolio</th>
+                  <th className="py-2 px-4 border-b">Portofolio</th>
                   <th className="py-2 px-4 border-b">Durasi Awal Magang</th>
                   <th className="py-2 px-4 border-b">Durasi Akhir Magang</th>
                   <th className="py-2 px-4 border-b">Tanggal Pengajuan</th>
@@ -244,9 +237,9 @@ function HasilDaftarMagang() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
-                          >
-                            Lihat Surat Rekomendasi
-                            </a>
+                        >
+                          Lihat Surat Rekomendasi
+                        </a>
                       ) : (
                         "File Tidak Tersedia"
                       )}
@@ -258,9 +251,9 @@ function HasilDaftarMagang() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
-                          >
-                            Lihat CV
-                            </a>
+                        >
+                          Lihat CV
+                        </a>
                       ) : (
                         "File Tidak Tersedia"
                       )}
@@ -272,9 +265,9 @@ function HasilDaftarMagang() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
-                          >
-                            Lihat Portofolio
-                            </a>
+                        >
+                          Lihat Portofolio
+                        </a>
                       ) : (
                         "Link Tidak Tersedia"
                       )}

@@ -103,7 +103,7 @@ const Login = () => {
                 <span style={{ color: "#D24545" }}>Akun</span>
               </h2>
               <p className="font-bold text-left text-gray-800">
-                Silahkan Masuk Ke Akun Anda Untuk Mendaftar
+                Silahkan Masuk Ke Akun Anda
               </p>
             </div>
           </div>
@@ -112,7 +112,7 @@ const Login = () => {
 
           <form onSubmit={handleLogin} noValidate>
             <div className="mb-4">
-              <label htmlFor="nik" className="block text-gray-700 text-left">Nomor Induk Kependudukan</label>
+              <label htmlFor="nik" className="block text-gray-700 text-left">NIK</label>
               <input
                 type="text"
                 id="nik"

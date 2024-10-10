@@ -111,7 +111,7 @@ function UpdateInfo() {
 
       {/* Title Section */}
       <div className="flex ml-64 mt-[86px] p-6">
-        <h3 className="text-xl font-bold">Kelola Banner Informasi Magang</h3>
+        <h3 className="text-xl font-bold">Update Informasi</h3>
       </div>
 
       <div className="flex-1 flex flex-row justify-between ml-64 px-6  bg-gray-100 rounded shadow">
