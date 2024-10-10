@@ -240,7 +240,7 @@ const DashboardAdmin = () => {
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <div className="relative mr-4">
+                  <div className="relative">
                     <input
                       type="text"
                       value={searchQuery}
@@ -307,19 +307,19 @@ const DashboardAdmin = () => {
                 <table className="min-w-full bg-white">
                   <thead>
                     <tr>
-                      <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[25%] text-sm font-semibold text-gray-600">
                         Nama
                       </th>
-                      <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
                         Jenjang Pendidikan
                       </th>
-                      <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[15%] text-sm font-semibold text-gray-600">
                         Tanggal Pendaftaran
                       </th>
-                      <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[10%] text-sm font-semibold text-gray-600">
                         Status
                       </th>
-                      <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[25%] text-sm font-semibold text-gray-600">
                         Aksi
                       </th>
                     </tr>
