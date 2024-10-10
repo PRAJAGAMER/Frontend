@@ -10,7 +10,7 @@ import {
 
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 20]; // Opsi untuk jumlah item per halaman
 
-function HasilDaftarMagang() {
+function DataPelamar() {
   const [pesertaData, setPesertaData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(""); // State untuk search
@@ -436,4 +436,4 @@ function HasilDaftarMagang() {
   );
 }
 
-export default HasilDaftarMagang;
+export default DataPelamar;

@@ -295,7 +295,7 @@ const DashboardAdmin = () => {
                     </div>
                   </div>
 
-                  <Link to="/hasildaftarmagang">
+                  <Link to="/datapelamar">
                     <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                       Lihat Selengkapnya
                     </button>

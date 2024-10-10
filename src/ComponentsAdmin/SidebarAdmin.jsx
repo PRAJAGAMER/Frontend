@@ -49,7 +49,7 @@ const SidebarAdmin = () => {
           Data Pengguna
         </button>
         <button
-          onClick={() => navigate("/hasildaftarmagang")}
+          onClick={() => navigate("/datapelamar")}
           className="flex items-center px-3 py-3 hover:bg-red-700"
         >
           <ClipboardDocumentCheckIcon className="h-6 w-6 mr-3" />
