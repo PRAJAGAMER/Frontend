@@ -2,14 +2,20 @@ import React, { useState, useEffect } from "react";
 import Header from "../ComponentsAdmin/HeaderAdmin";
 import * as XLSX from "xlsx";
 import axios from "axios";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid"; // Import ikon search dari Heroicons
+import {
+  MagnifyingGlassIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+} from "@heroicons/react/24/solid"; // Import ikon search dan arrow dari Heroicons
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 15, 20]; // Opsi untuk jumlah item per halaman
 
 const DataPengguna = () => {
   const [pesertaData, setPesertaData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(""); // State untuk search
+  const [itemsPerPage, setItemsPerPage] = useState(10); // State untuk jumlah item per halaman
+  const [sortOption, setSortOption] = useState("newest"); // State untuk sorting
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -58,20 +64,53 @@ const DataPengguna = () => {
     setCurrentPage(1);
   };
 
-  const filteredData = pesertaData.filter((peserta) =>
-    peserta.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    peserta.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    peserta?.Profile?.nik?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    peserta?.University?.univ_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(parseInt(e.target.value, 10));
+    setCurrentPage(1); // Reset ke halaman pertama saat jumlah per halaman berubah
+  };
+
+  const filteredData = pesertaData.filter(
+    (peserta) =>
+      peserta.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      peserta.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      peserta?.Profile?.nik
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      peserta?.University?.univ_name
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase())
   );
 
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentData = filteredData.slice(startIndex, startIndex + PAGE_SIZE);
-  const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+  const sortedData = () => {
+    if (sortOption === "newest") {
+      return [...filteredData].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+    } else if (sortOption === "oldest") {
+      return [...filteredData].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+    } else if (sortOption === "alphabetical") {
+      return [...filteredData].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return filteredData;
+  };
+
+  const currentData = sortedData().slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-    return dateString ? new Date(dateString).toLocaleDateString("id-ID", options) : "Kosong";
+    return dateString
+      ? new Date(dateString).toLocaleDateString("id-ID", options)
+      : "Kosong";
   };
 
   const sendWhatsAppMessage = (phoneNumber, status) => {
@@ -108,16 +147,12 @@ const DataPengguna = () => {
     }
 
     try {
-      await axios.put(
-        "http://localhost:5000/api/users/status",
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.put("http://localhost:5000/api/users/status", data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       // Refresh data after update
       const response = await axios.get("http://localhost:5000/api/users", {
         headers: {
@@ -137,8 +172,25 @@ const DataPengguna = () => {
     <div className="flex flex-col h-screen">
       <Header className="relative z-20" />
       <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
+        <h3 className="text-3xl font-bold mb-5">Data Pengguna</h3>
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">Data Pengguna</h3>
+          {/* Jumlah setiap halaman di sebelah kiri search */}
+          <div className="flex items-center space-x-2 font-semibold text-md">
+            <span>Jumlah setiap halaman</span>
+            <select
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+              className="border rounded p-1"
+            >
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Bagian search, sorting, dan export */}
           <div className="flex items-center space-x-4">
             <div className="relative">
               <input
@@ -150,6 +202,52 @@ const DataPengguna = () => {
               />
               <MagnifyingGlassIcon className="absolute left-2 top-2 w-6 h-6 text-gray-400" />
             </div>
+
+            {/* Dropdown Sorting */}
+            <div className="relative inline-block">
+              <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
+                <select
+                  value={sortOption}
+                  onChange={handleSortChange}
+                  style={{
+                    color: "white",
+                    backgroundColor: "transparent",
+                    cursor: "pointer",
+                    outline: "none",
+                    border: "none",
+                    width: "100%",
+                  }}
+                  className="flex-grow appearance-none focus:outline-none font-semibold"
+                >
+                  <option
+                    value="newest"
+                    style={{ backgroundColor: "white", color: "black" }}
+                  >
+                    Data Terbaru
+                  </option>
+                  <option
+                    value="oldest"
+                    style={{ backgroundColor: "white", color: "black" }}
+                  >
+                    Data Terlama
+                  </option>
+                  <option
+                    value="alphabetical"
+                    style={{ backgroundColor: "white", color: "black" }}
+                  >
+                    Berdasarkan Abjad
+                  </option>
+                </select>
+                {sortOption === "newest" && (
+                  <ArrowDownIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "oldest" && (
+                  <ArrowUpIcon className="inline w-8 h-4 ml-2" />
+                )}
+              </div>
+            </div>
+
+            {/* Tombol Export */}
             <button
               onClick={handleExportToExcel}
               className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
@@ -159,6 +257,7 @@ const DataPengguna = () => {
           </div>
         </div>
 
+        {/* Data Table */}
         <div className="bg-white p-4 rounded shadow">
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
@@ -183,16 +282,31 @@ const DataPengguna = () => {
                 {currentData.map((peserta, index) => (
                   <tr key={index}>
                     <td className="py-2 px-4 border-b">{peserta.name}</td>
-                    <td className="py-2 px-4 border-b">{peserta?.University?.nim || "tidak terisi"}</td>
-                    <td className="py-2 px-4 border-b">{peserta?.Profile?.nik || "tidak terisi"}</td>
-                    <td className="py-2 px-4 border-b">{peserta?.email || "tidak terisi"}</td>
-                    <td className="py-2 px-4 border-b">{peserta?.Profile?.telp_user || "tidak terisi"}</td>
-                    <td className="py-2 px-4 border-b">{peserta?.University?.univ_name || "tidak terisi"}</td>
-                    <td className="py-2 px-4 border-b">{peserta?.University?.major || "tidak terisi"}</td>
+                    <td className="py-2 px-4 border-b">
+                      {peserta?.University?.nim || "tidak terisi"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {peserta?.Profile?.nik || "tidak terisi"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {peserta?.email || "tidak terisi"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {peserta?.Profile?.telp_user || "tidak terisi"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {peserta?.University?.univ_name || "tidak terisi"}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {peserta?.University?.major || "tidak terisi"}
+                    </td>
                     <td className="py-2 px-4 border-b">
                       {peserta.Profile.photo ? (
                         <a
-                          href={"http://localhost:5000/uploads/" + peserta.Profile.photo}
+                          href={
+                            "http://localhost:5000/uploads/" +
+                            peserta.Profile.photo
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
@@ -206,7 +320,9 @@ const DataPengguna = () => {
                     <td className="py-2 px-4 border-b">
                       {peserta.Regist.cv ? (
                         <a
-                          href={"http://localhost:5000/uploads/" + peserta.Regist.cv}
+                          href={
+                            "http://localhost:5000/uploads/" + peserta.Regist.cv
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
@@ -220,7 +336,10 @@ const DataPengguna = () => {
                     <td className="py-2 px-4 border-b">
                       {peserta.Regist.score_list ? (
                         <a
-                          href={"http://localhost:5000/uploads/" + peserta.Regist.score_list}
+                          href={
+                            "http://localhost:5000/uploads/" +
+                            peserta.Regist.score_list
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
@@ -231,17 +350,23 @@ const DataPengguna = () => {
                         "Transkrip tidak tersedia"
                       )}
                     </td>
-                    <td className="py-2 px-4 border-b">{formatDate(peserta.createdAt)}</td>
+                    <td className="py-2 px-4 border-b">
+                      {formatDate(peserta.createdAt)}
+                    </td>
                     <td className="py-2 px-4 border-b">{peserta.status}</td>
                     <td className="py-2 px-4 border-b flex flex-row w-72">
                       <button
-                        onClick={() => handleUpdateStatus(peserta.user_id, "Accepted", index)}
+                        onClick={() =>
+                          handleUpdateStatus(peserta.user_id, "Accepted", index)
+                        }
                         className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600 hover:underline"
                       >
                         Terima
                       </button>
                       <button
-                        onClick={() => handleUpdateStatus(peserta.user_id, "Rejected", index)}
+                        onClick={() =>
+                          handleUpdateStatus(peserta.user_id, "Rejected", index)
+                        }
                         className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600 hover:underline"
                       >
                         Tolak
@@ -252,26 +377,27 @@ const DataPengguna = () => {
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div className="mt-4 flex justify-between items-center">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded shadow hover:bg-gray-400"
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded shadow hover:bg-gray-400"
-            >
-              Next
-            </button>
-          </div>
+        {/* Pagination controls di bawah tabel */}
+        <div className="flex justify-center items-center mt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+          >
+            Sebelumnya
+          </button>
+          <span className="mx-8">
+            Halaman {currentPage} dari {totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+          >
+            Selanjutnya
+          </button>
         </div>
       </div>
     </div>
