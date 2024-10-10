@@ -16,24 +16,30 @@ const DataPengguna = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State untuk search
   const [itemsPerPage, setItemsPerPage] = useState(10); // State untuk jumlah item per halaman
   const [sortOption, setSortOption] = useState("newest"); // State untuk sorting
-  const token = localStorage.getItem("token");
+  const [error, setError] = useState(null); // State for error handling
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setPesertaData(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin"; // Redirect to login page if no token
+    } else {
+      fetchData(token); // Fetch data if token exists
+    }
+  }, []);
 
-    fetchData();
-  }, [token]);
+  const fetchData = async (token) => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setPesertaData(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const handleExportToExcel = () => {
     const exportData = pesertaData.map((peserta) => ({
