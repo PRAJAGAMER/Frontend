@@ -16,16 +16,20 @@ function HasilDaftarMagang() {
   const [searchQuery, setSearchQuery] = useState(""); // State untuk search
   const [itemsPerPage, setItemsPerPage] = useState(10); // State untuk jumlah item per halaman
   const [sortOption, setSortOption] = useState("newest"); // State untuk sorting
+  const [error, setError] = useState(null); // State untuk error handling
 
-  const getToken = () => localStorage.getItem("token");
-
-  const fetchPesertaData = async () => {
-    const token = getToken();
+  // Function to check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
     if (!token) {
-      console.warn("Token tidak ditemukan. Silakan login ulang.");
-      return;
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin"; // Redirect to login page if no token
+    } else {
+      fetchPesertaData(token);
     }
+  }, []);
 
+  const fetchPesertaData = async (token) => {
     try {
       const response = await fetch("http://localhost:5000/api/users2", {
         headers: {
@@ -38,9 +42,7 @@ function HasilDaftarMagang() {
         if (data) {
           setPesertaData(data);
         } else {
-          console.warn(
-            "Data applicantsList tidak ditemukan dalam respons API."
-          );
+          console.warn("Data applicantsList tidak ditemukan dalam respons API.");
           setPesertaData([]);
         }
       } else {
@@ -50,10 +52,6 @@ function HasilDaftarMagang() {
       console.error("Error fetching data:", error);
     }
   };
-
-  useEffect(() => {
-    fetchPesertaData();
-  }, []);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);

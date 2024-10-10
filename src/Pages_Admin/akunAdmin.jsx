@@ -16,6 +16,18 @@ function AkunAdmin() {
   const [sortOption, setSortOption] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
+  const [error, setError] = useState(null); // State for error handling
+
+  // Function to check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin"; // Redirect to login page if no token
+    } else {
+      fetchAdminData();
+    }
+  }, []);
 
   const fetchAdminData = async () => {
     const token = localStorage.getItem("token");
@@ -42,10 +54,6 @@ function AkunAdmin() {
       console.error("Error fetching admin data:", error);
     }
   };
-
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem("token");
