@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function ModalTambahAdmin({ isOpen, onClose, onAddAdmin }) {
   const [formData, setFormData] = useState({
@@ -10,6 +9,20 @@ function ModalTambahAdmin({ isOpen, onClose, onAddAdmin }) {
     password: '',
   });
   const [error, setError] = useState(null); // State untuk menangani error
+
+  // Reset the form data when the modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        nama: '',
+        nip: '',
+        noTelp: '',
+        email: '',
+        password: '',
+      });
+      setError(null); // Clear any existing errors when reopening the modal
+    }
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
