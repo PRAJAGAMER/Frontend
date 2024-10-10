@@ -81,19 +81,19 @@ useEffect(() => {
               </h3>
               <div className="border rounded p-4 bg-gray-100">
                 {/* Nomor Induk Mahasiswa dan Nomor Induk Kependudukan */}
-                <div className="flex justify-between mb-2">
-                  <div className="w-1/2">
+                <div className="lg:flex lg:justify-between mb-2">
+                  <div className="lg:w-1/2">
                     <label>Nomor Induk Mahasiswa</label>
                     <p className="font-semibold">{dataProfil?.nim}</p>
                   </div>
-                  <div className="w-1/2">
+                  <div className="lg:w-1/2">
                     <label>Nomor Induk Kependudukan</label>
                     <p className="font-semibold">{dataProfil?.nik}</p>
                   </div>
                 </div>
 
                 {/* Tempat dan Tanggal Lahir */}
-                <div className="flex justify-between mb-2">
+                <div className="lg:flex justify-between mb-2">
                   <div className="w-1/2">
                     <label>Tempat Lahir</label>
                     {dataProfil?.place_birth? (
@@ -113,9 +113,9 @@ useEffect(() => {
                 </div>
 
                 {/* Alamat Domisili */}
-                <p className="font-semibold block">Alamat Domisili</p>
-                <div className="flex justify-between mb-2">
-                  <div className="w-1/2">
+                <p className="mt-5 lg:mt-0 font-semibold block">Alamat Domisili</p>
+                <div className="lg:flex justify-between lg:mb-2">
+                  <div className="lg:w-1/2">
                     <label>Provinsi</label>
                     {dataProfil?.province_domicile? (
                       <p className="font-semibold">
@@ -125,7 +125,7 @@ useEffect(() => {
                       <p className="font-semibold">-</p>
                     )}
                   </div>
-                  <div className="w-1/2">
+                  <div className="lg:w-1/2">
                     <label>Kota/Kab</label>
                     {dataProfil?.city_domicile? (
                       <p className="font-semibold">
@@ -136,7 +136,7 @@ useEffect(() => {
                     )}
                   </div>
                 </div>
-                <div className="w-1/2 mb-2">
+                <div className="lg:w-1/2 mb-2">
                   <label>Alamat Domisili</label>
                   {dataProfil?.address_domicile? (
                       <p className="font-semibold">
@@ -151,8 +151,8 @@ useEffect(() => {
                 <div className="mb-2">
                   <p className="font-semibold block">Alamat Domisili KTP</p>
                 </div>
-                <div className="flex justify-between mb-2">
-                  <div className="w-1/2">
+                <div className="lg:flex justify-between mb-2">
+                  <div className="lg:w-1/2">
                     <label>Provinsi</label>
                     {dataProfil?.province_ktp? (
                       <p className="font-semibold">
@@ -162,7 +162,7 @@ useEffect(() => {
                       <p className="font-semibold">-</p>
                     )}
                   </div>
-                  <div className="w-1/2">
+                  <div className="lg:w-1/2">
                     <label>Kota/Kab</label>
                     {dataProfil?.city_ktp? (
                       <p className="font-semibold">
@@ -173,8 +173,8 @@ useEffect(() => {
                     )}
                   </div>
                 </div>
-                <div className="w-1/2 mb-2">
-                  <label>Alamat Domisili</label>
+                <div className="lg:w-1/2 mb-2">
+                  <label>Alamat Domisili KTP</label>
                   {dataProfil?.address_ktp? (
                       <p className="font-semibold">
                         {dataProfil?.address_ktp}
