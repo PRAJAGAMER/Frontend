@@ -4,20 +4,34 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const login = (data, navigate) => async (dispatch, getState) => {
-  console.log(data);
   try {
-    const response = await axios.post(
-      `http://localhost:5000/api/user/login`,
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`http://localhost:5000/api/user/login`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     if (response.status === 200) {
+      const user = response.data.user;
+
+      // Cek status akun
+      if (user.status === "Pending") {
+        toast.error("Akun anda belum terverifikasi, silahkan hubungi admin.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        return; // Jangan lanjutkan login jika status akun "Pending"
+      }
+
+      // Jika status akun aktif, lanjutkan proses login
       dispatch(setToken(response.data.token));
-      dispatch(setUser(response.data.user));
+      dispatch(setUser(user));
       toast.success("Login Berhasil", {
         position: "top-right",
         autoClose: 5000,
@@ -55,6 +69,17 @@ export const login = (data, navigate) => async (dispatch, getState) => {
             progress: undefined,
             theme: "colored",
           });
+        } else if (error.response.status === 403) {
+          toast.error("Akun Anda belum diverifikasi. Silakan hubungi admin.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         } else {
           toast.error("Terjadi kesalahan. Periksa koneksi Anda.", {
             position: "top-right",
@@ -71,7 +96,6 @@ export const login = (data, navigate) => async (dispatch, getState) => {
     }
   }
 };
-
 export const register = (data, navigate) => async (dispatch, getState) => {
   console.log("Isi data:", data);
 

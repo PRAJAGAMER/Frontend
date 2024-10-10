@@ -166,27 +166,31 @@ const EditProfilePage = () => {
   };
 
   const handleImageChange = (file) => {
-    setFormData((prev) => ({
-      ...prev, // Use previous state to spread current form data
-      fotoProfil: file, // Set the file as the new profile photo
-    }));
-  };
-
-  const handleCancelCrop = () => {
-    setShowCropper(false);
-    setFormData({ ...formData, fotoProfil: null });
-  };
-
-  const handleCrop = () => {
-    if (cropper && typeof cropper.getCroppedCanvas === "function") {
-      const croppedCanvas = cropper.getCroppedCanvas();
-      if (croppedCanvas) {
-        const fotoProfil = croppedCanvas.toDataURL();
-        setFormData({ ...formData, fotoProfil });
-        setShowCropper(false);
-      }
+    if (file) {
+      const previewUrl = URL.createObjectURL(file); // Buat URL sementara untuk preview gambar
+      setFormData((prev) => ({
+        ...prev,
+        fotoProfil: file, // Set URL sementara untuk menampilkan gambar baru
+        previewFoto: previewUrl,
+      }));
     }
   };
+
+  // const handleCancelCrop = () => {
+  //   setShowCropper(false);
+  //   setFormData({ ...formData, fotoProfil: null });
+  // };
+
+  // const handleCrop = () => {
+  //   if (cropper && typeof cropper.getCroppedCanvas === "function") {
+  //     const croppedCanvas = cropper.getCroppedCanvas();
+  //     if (croppedCanvas) {
+  //       const fotoProfil = croppedCanvas.toDataURL();
+  //       setFormData({ ...formData, fotoProfil });
+  //       setShowCropper(false);
+  //     }
+  //   }
+  // };
 
   const imageUrl =
     formData.fotoProfil instanceof File
@@ -194,6 +198,14 @@ const EditProfilePage = () => {
       : formData.fotoProfil || Profile;
 
   const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Jika pengguna mengunggah gambar baru, gunakan file baru
+    let fotoProfil =
+      formData.fotoProfil instanceof File
+        ? formData.fotoProfil // Jika pengguna mengunggah gambar baru, gunakan file baru
+        : dataEditProfile.photo; // Jika tidak, gunakan gambar yang lama
+
     let data = {
       ipk: formData.ipk,
       semester: formData.semester,
@@ -208,10 +220,10 @@ const EditProfilePage = () => {
       city_domicile: formData.kotaDomisili,
       province_ktp: formData.provinsiKTP,
       city_ktp: formData.kotaKTP,
-      photo: formData.fotoProfil,
+      photo: fotoProfil, // Pastikan mengirim foto yang benar
       telp_user: formData.noTelp,
     };
-    e.preventDefault();
+
     console.log("Data Handle Submit", data);
     dispatch(postUpdateProfil(data, navigate));
   };
@@ -225,11 +237,15 @@ const EditProfilePage = () => {
         </h1>
         <form onSubmit={handleSubmit} className="px-6">
           <div className="lg:flex my-8 gap-4">
-            <div className="relative justify-center mx-16">
+            <div className="relative flex justify-center item mx-16">
               <img
-                src={formData.fotoProfil}
+                src={
+                  formData.previewFoto ||
+                  formData.fotoProfil ||
+                  dataEditProfile.photo
+                }
                 alt="Foto Profil"
-                className="w-[300px] h-[260px] object-cover rounded-full"
+                className="w-[300px] h-[260px] md:w-[300px] md:h-[300px] lg:w-[300px] lg:h-[260px] object-cover rounded-full"
               />
               <input
                 type="file"
@@ -238,10 +254,15 @@ const EditProfilePage = () => {
                 ref={imageInputRef}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
-              <div className="absolute bottom-0 right-0 transform translate-x-[-5px] translate-y-[-25px] bg-white p-1 rounded-full shadow-md cursor-pointer">
+              {/* Update untuk posisi icon agar di kanan bawah pada layar kecil, dan kiri bawah pada iPad */}
+              <div
+                onClick={() => imageInputRef.current.click()} // Memicu click pada input file
+                className="absolute  bottom-0 right-2 md:right-44 md:bottom-0 lg:right-0 transform md:translate-x-[10px] md:translate-y-[5px]  bg-white p-1 rounded-full shadow-md cursor-pointer "
+              >
                 <PencilSquareIcon className="h-10 text-gray-600" />
               </div>
             </div>
+
             <div className="border rounded  p-4 lg:w-[750px] h-min">
               <label className="font-semibold block mb-2 text-xl">
                 Kontak Pribadi
@@ -252,8 +273,8 @@ const EditProfilePage = () => {
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleChange}
-                  className="w-full border rounded px-3 py-2"
+                  readOnly
+                  className="w-full border rounded px-3 py-2  cursor-not-allowed"
                 />
               </div>
               <div>
@@ -315,8 +336,8 @@ const EditProfilePage = () => {
                   type="text"
                   name="nama"
                   value={formData.nama}
-                  onChange={handleChange}
-                  className="w-full border rounded px-3 py-2"
+                  readOnly
+                  className="w-full border rounded px-3 py-2  cursor-not-allowed"
                 />
               </div>
               <div>
@@ -338,8 +359,8 @@ const EditProfilePage = () => {
                   type="text"
                   name="nim"
                   value={formData.nim}
-                  onChange={handleChange}
-                  className="w-full border rounded px-3 py-2"
+                  readOnly
+                  className="w-full border rounded px-3 py-2  cursor-not-allowed"
                 />
               </div>
               <div>
@@ -358,18 +379,18 @@ const EditProfilePage = () => {
                   type="text"
                   name="nik"
                   value={formData.nik}
-                  onChange={handleChange}
-                  className="w-full border rounded px-3 py-2"
+                  readOnly
+                  className="w-full border rounded px-3 py-2  cursor-not-allowed"
                 />
               </div>
             </div>
 
-            <div className="lg:grid lg:grid-cols-2 gap-4 mt-4">
+            <div className="lg:grid lg:grid-cols-2 gap-4 mt-10 lg:mt-4">
               <div>
                 <label className="font-semibold block mb-2 text-xl">
                   Alamat Domisili Tinggal
                 </label>
-                <div className="mt-12">
+                <div className="lg:mt-12">
                   <label className="block mb-2">Provinsi</label>
                   <select
                     name="provinsiDomisili"
@@ -415,7 +436,7 @@ const EditProfilePage = () => {
               </div>
 
               <div>
-                <label className="font-semibold block mb-2 text-xl">
+                <label className="font-semibold block mb-2 text-xl mt-10 lg:mt-0">
                   Alamat Domisili KTP
                 </label>
                 <div className="mt-4">
@@ -476,7 +497,7 @@ const EditProfilePage = () => {
               </div>
             </div>
           </div>
-{/* INFOMRASI DATA AKADEMIK */}
+          {/* INFOMRASI DATA AKADEMIK */}
           <div className="lg:grid lg:grid-cols-2 gap-4 my-8">
             <div className="border rounded p-4">
               <label className="font-semibold block mb-2 text-xl">
@@ -519,7 +540,7 @@ const EditProfilePage = () => {
               </div>
             </div>
 
-            <div className="border rounded p-4">
+            <div className="border rounded p-4 mt-10 lg:mt-0">
               <label className="font-semibold block mb-2 text-xl">
                 Pembimbing
               </label>

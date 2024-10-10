@@ -33,6 +33,8 @@ const DataPengguna = () => {
     fetchData();
   }, [token]);
 
+  console.log("peserta data: ", pesertaData);
+
   const handleExportToExcel = () => {
     const exportData = pesertaData.map((peserta) => ({
       Nama: peserta.name,
@@ -140,6 +142,8 @@ const DataPengguna = () => {
     return date.toLocaleDateString("id-ID", options); // 'id-ID' untuk format tanggal Indonesia
   };
 
+  console.log("currentData:", currentData);
+
   return (
     <div className="flex flex-col h-screen">
       <Header className="relative z-20" />
@@ -186,20 +190,20 @@ const DataPengguna = () => {
                       <tr key={index}>
                         <td className="py-2 px-4 border-b">{peserta.name}</td>
                         <td className="py-2 px-4 border-b">
-                          {peserta.University.nim}
+                          {peserta?.University?.nim || "tidak terisi"}
                         </td>
                         <td className="py-2 px-4 border-b">
-                          {peserta.Profile.nik}
+                          {peserta?.Profile?.nik || "tidak terisi"}
                         </td>
-                        <td className="py-2 px-4 border-b">{peserta.email}</td>
+                        <td className="py-2 px-4 border-b">{peserta?.email || "tidak terisi"}</td>
                         <td className="py-2 px-4 border-b">
-                          {peserta.Profile.telp_user}
-                        </td>
-                        <td className="py-2 px-4 border-b">
-                          {peserta.University.univ_name}
+                          {peserta?.Profile?.telp_user || "tidak terisi"}
                         </td>
                         <td className="py-2 px-4 border-b">
-                          {peserta.University.major}
+                          {peserta?.University?.univ_name || "tidak terisi"}
+                        </td>
+                        <td className="py-2 px-4 border-b">
+                          {peserta?.University?.major || "tidak terisi"}
                         </td>
                         <td className="py-2 px-4 border-b">
                           {peserta.Profile.photo ? (
