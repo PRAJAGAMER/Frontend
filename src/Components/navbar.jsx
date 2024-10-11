@@ -14,6 +14,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State untuk mengontrol modal
 
   const token = useSelector((state) => state.auth.token);
   // console.log("token",token)
@@ -23,9 +24,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout()); // Panggil action logout untuk menghapus token
-    localStorage.removeItem("token"); // Hapus token dari localStorage jika Anda menyimpannya di sana
+    localStorage.removeItem("token"); // Hapus token dari localStorage jika ada
     navigate("/"); // Redirect ke halaman home
   };
+
+  const openModal = () => setIsModalOpen(true); // Fungsi membuka modal
+  const closeModal = () => setIsModalOpen(false); // Fungsi menutup modal
 
   // Ambil nama depan dari user
   const getFirstName = (fullName) => {
@@ -107,9 +111,7 @@ const Navbar = () => {
               >
                 Daftar Magang
               </button>
-              {!token ? (
-                null
-              ) : (
+              {!token ? null : (
                 <div className="mt-auto">
                   <button
                     className={`block w-full px-5 py-2 text-left text-xl ${
@@ -138,10 +140,41 @@ const Navbar = () => {
                 <div className="mt-auto">
                   <button
                     className="block w-full px-8 py-2 mt-4 bg-[#D24545] text-xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
-                    onClick={handleLogout}
+                    onClick={() => setIsModalOpen(true)} // Menampilkan modal saat logout diklik
                   >
                     Logout
                   </button>
+
+                  {isModalOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                      <div className="bg-white p-6 rounded-md shadow-md w-80">
+                        <h3 className="text-lg font-bold mb-4">
+                          Konfirmasi Logout
+                        </h3>
+                        <p>Apakah Anda yakin ingin keluar?</p>
+                        <div className="flex justify-end mt-6">
+                          {/* Tombol Batal */}
+                          <button
+                            onClick={() => setIsModalOpen(false)} // Menutup modal saat batal
+                            className="mr-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                          >
+                            Batal
+                          </button>
+
+                          {/* Tombol Logout */}
+                          <button
+                            onClick={() => {
+                              setIsModalOpen(false); // Tutup modal
+                              handleLogout(); // Fungsi logout dipanggil
+                            }}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -236,10 +269,40 @@ const Navbar = () => {
                 </button>
                 <button
                   className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-200"
-                  onClick={handleLogout}
+                  onClick={openModal} // Open the modal on clicking this button
                 >
                   Logout
                 </button>
+              </div>
+            )}
+
+            {/* Modal Konfirmasi */}
+            {isModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div className="bg-white p-6 rounded-md shadow-md w-80">
+                  <h3 className="text-lg font-bold mb-4">Konfirmasi Logout</h3>
+                  <p>Apakah Anda yakin ingin keluar?</p>
+                  <div className="flex justify-end mt-6">
+                    {/* Tombol Batal */}
+                    <button
+                      onClick={closeModal}
+                      className="mr-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                    >
+                      Batal
+                    </button>
+
+                    {/* Tombol Logout */}
+                    <button
+                      onClick={() => {
+                        closeModal();
+                        handleLogout();
+                      }}
+                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

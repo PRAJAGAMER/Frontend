@@ -14,6 +14,18 @@ import "react-toastify/dist/ReactToastify.css";
 function FormPendaftaran2() {
   const navigate = useNavigate(); // Inisialisasi useNavigate
   const dispatch = useDispatch();
+  // State for checkbox
+  const [isChecked, setIsChecked] = useState(false);
+  const dataPendaftaran = useSelector((state) => state.pendaftaran.dataPendaf);
+  // console.log("data xxxxxx", dataPendaftaran);
+
+  const [formData2, setFormData2] = useState({
+    suratRekomendasi: null,
+    cv: dataPendaftaran?.cv,
+    portofolio: null,
+    durasiAwal: "",
+    durasiAkhir: "",
+  });
 
   // Get the token from the Redux state
   const token = useSelector((state) => state.auth.token);
@@ -33,27 +45,50 @@ function FormPendaftaran2() {
     dispatch(getDataPendaftaran());
   }, []);
 
-  // State for checkbox
-  const [isChecked, setIsChecked] = useState(false);
-  const dataPendaftaran = useSelector((state) => state.pendaftaran.dataPendaf);
-  console.log("data xxxxxx", dataPendaftaran);
+ // Handle change for Tanggal Mulai
+ const handleTanggalMulaiChange = (event) => {
+  const selectedDate = new Date(event.target.value);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set time to 00:00 for accurate comparison
 
-  // Handle change for Tanggal Mulai
-  const handleTanggalMulaiChange = (event) => {
+  if (selectedDate < today) {
+    toast.warning("Tanggal mulai tidak boleh kurang dari hari ini.");
+  } else {
     setFormData2((prevData) => ({
       ...prevData,
       durasiAwal: event.target.value, // Update durasiAwal
+      durasiAkhir: "", // Reset durasiAkhir when durasiAwal is changed
     }));
-  };
+  }
+};
 
-  // Handle change for Tanggal Selesai
-  const handleTanggalSelesaiChange = (event) => {
+// Handle change for Tanggal Selesai
+const handleTanggalSelesaiChange = (event) => {
+  const tanggalMulai = new Date(formData2.durasiAwal);
+  const selectedEndDate = new Date(event.target.value);
+  const minEndDate = new Date(tanggalMulai);
+  minEndDate.setDate(tanggalMulai.getDate() + 30); // Add 30 days to Tanggal Mulai
+
+  if (selectedEndDate < minEndDate) {
+    toast.warning(
+      "Tanggal selesai harus minimal 30 hari setelah tanggal mulai."
+    );
+  } else {
     setFormData2((prevData) => ({
       ...prevData,
       durasiAkhir: event.target.value, // Update durasiAkhir
     }));
-  };
+  }
+};
 
+// Calculate min date for "Tanggal Selesai" input
+const getMinEndDate = () => {
+  if (!formData2.durasiAwal) return "";
+  const tanggalMulai = new Date(formData2.durasiAwal);
+  const minEndDate = new Date(tanggalMulai);
+  minEndDate.setDate(tanggalMulai.getDate() + 30); // Add 30 days
+  return minEndDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+};
   // Handle change for Tanggal Selesai
   const handlePortofolioChange = (event) => {
     setFormData2((prevData) => ({
@@ -61,23 +96,6 @@ function FormPendaftaran2() {
       portofolio: event.target.value, // Update durasiAkhir
     }));
   };
-
-  // Handle change for Tanggal Selesai
-  const handleImageChange = (event) => {
-    setFormData2((prevData) => ({
-      ...prevData,
-      suratRekomendasi: event.target.value, // Update durasiAkhir
-    }));
-  };
-
-  const [formData2, setFormData2] = useState({
-    suratRekomendasi: null,
-    cv: dataPendaftaran?.cv,
-    portofolio: null,
-    durasiAwal: null,
-    durasiAkhir: null,
-  });
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,69 +152,96 @@ function FormPendaftaran2() {
     dispatch(postPendaftaranMagang(data, navigate));
   };
 
-  const fileInputRefForData = useRef(null);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
 
+  // Fungsi validasi file
+  const validateFile = (file) => {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const isPdf = fileExtension === "pdf";
+    const isUnderMaxSize = file.size <= MAX_FILE_SIZE;
+  
+    if (!isPdf) {
+      toast.warning("File harus berformat PDF.");
+      return false;
+    }
+  
+    if (!isUnderMaxSize) {
+      toast.warning("Ukuran file tidak boleh lebih dari 5 MB.");
+      return false;
+    }
+  
+    return true;
+  };
+  
+  const fileInputRefForData = useRef(null);
+  
   const handleClickForData = () => {
     if (fileInputRefForData.current) {
       fileInputRefForData.current.click();
     }
   };
-
+  
   const handleFileChangeForData = (file) => {
     if (file) {
       if (file instanceof File) {
-        const fileUrl = URL.createObjectURL(file); // Create Blob URL
-        setFormData2((prev) => ({
-          ...prev,
-          suratRekomendasi: file, // Simpan file asli
-          suratRekomendasiUrl: fileUrl, // Simpan Blob URL untuk preview
-        }));
+        if (validateFile(file)) {
+          const fileUrl = URL.createObjectURL(file); // Create Blob URL
+          setFormData2((prev) => ({
+            ...prev,
+            suratRekomendasi: file, // Simpan file asli
+            suratRekomendasiUrl: fileUrl, // Simpan Blob URL untuk preview
+          }));
+        }
       } else {
         console.error("File is not valid");
       }
     }
   };
-
+  
   const fileInputRefForCV = useRef(null);
-
+  
   const handleClickForCv = () => {
     if (fileInputRefForCV.current) {
       fileInputRefForCV.current.click();
     }
   };
-
+  
   const handleFileChangeForCv = (file) => {
     if (file) {
       if (file instanceof File) {
-        const fileUrl = URL.createObjectURL(file);
-        setFormData2((prev) => ({
-          ...prev,
-          cv: file,
-          cvUrl: fileUrl,
-        }));
+        if (validateFile(file)) {
+          const fileUrl = URL.createObjectURL(file);
+          setFormData2((prev) => ({
+            ...prev,
+            cv: file,
+            cvUrl: fileUrl,
+          }));
+        }
       } else {
         console.error("File is not valid");
       }
     }
   };
-
+  
   const fileInputRefForPorto = useRef(null);
-
+  
   const handleClickForPorto = () => {
     if (fileInputRefForPorto.current) {
       fileInputRefForPorto.current.click();
     }
   };
-
+  
   const handleFileChangeForPorto = (file) => {
     if (file) {
       if (file instanceof File) {
-        const fileUrl = URL.createObjectURL(file);
-        setFormData2((prev) => ({
-          ...prev,
-          portofolio: file,
-          portofolioUrl: fileUrl,
-        }));
+        if (validateFile(file)) {
+          const fileUrl = URL.createObjectURL(file);
+          setFormData2((prev) => ({
+            ...prev,
+            portofolio: file,
+            portofolioUrl: fileUrl,
+          }));
+        }
       } else {
         console.error("File is not valid");
       }
@@ -294,7 +339,7 @@ function FormPendaftaran2() {
                     />
                   </button>
                   <span className="bg-white text-gray-500 py-2 px-4 border border-l-0 rounded-r flex-1">
-                    {formData2?.cvUrl ? formData2?.cv.name : formData2.cv}
+                    {formData2?.cvUrl ? formData2?.cv.name  : "Upload CV Terbaru"}
                   </span>
                 </div>
                 <p className="text-gray-400 text-xs mt-2">
@@ -382,6 +427,8 @@ function FormPendaftaran2() {
                       className="w-full border rounded px-3 py-2"
                       value={formData2.durasiAkhir || ""} // Bind value to state
                       onChange={handleTanggalSelesaiChange} // Handle change
+                      min={getMinEndDate()} // Set minimum date for tanggal selesai
+                      disabled={!formData2.durasiAwal} // Disable if tanggal mulai is not set
                     />
                   </div>
                 </div>
