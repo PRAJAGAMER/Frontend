@@ -161,7 +161,7 @@ function AkunAdmin() {
         <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2 font-semibold text-md">
             <span>Jumlah setiap halaman</span>
-            <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="border rounded p-1">
+            <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="border rounded-lg p-1">
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={15}>15</option>
@@ -181,7 +181,7 @@ function AkunAdmin() {
             </div>
 
             <div className="relative inline-block">
-              <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
+              <div className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
                 <select
                   value={sortOption}
                   onChange={handleSortChange}
@@ -212,7 +212,7 @@ function AkunAdmin() {
             </div>
 
             <button
-              className="px-4 py-2 rounded-md bg-[#D24545] text-white font-semibold flex justify-center items-center gap-2"
+              className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold flex justify-center items-center gap-2"
               onClick={handleOpenModal}
             >
               <PlusCircleIcon className="h-5 w-5" />
@@ -223,7 +223,7 @@ function AkunAdmin() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-md shadow overflow-x-auto">
+        <div className="bg-white p-4 rounded-lg shadow overflow-x-auto">
           <div className="w-full mx-auto"> {/* Set the fixed-width container */}
             <table className="min-w-full bg-white table-fixed"> {/* Added table-fixed class for equal-width columns */}
               <thead>
@@ -247,7 +247,7 @@ function AkunAdmin() {
                       <td className="py-2 border-b flex items-center justify-center">
                         <button
                           onClick={() => handleDelete(admin.id)}
-                          className="ml-2 px-4 py-2 w-50 bg-red-500 text-white rounded-md hover:bg-red-600 flex justify-center items-center"
+                          className="ml-2 px-4 py-2 w-50 bg-red-500 text-white rounded-lg hover:bg-red-600 flex justify-center items-center"
                         >
                           Hapus Akun
                         </button>
@@ -268,7 +268,7 @@ function AkunAdmin() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Sebelumnya
           </button>
@@ -278,7 +278,7 @@ function AkunAdmin() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Selanjutnya
           </button>

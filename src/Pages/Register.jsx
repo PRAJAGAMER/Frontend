@@ -562,7 +562,7 @@ const Register = () => {
 
             <button
               type="submit"
-              className="py-3 px-10 bg-[#D24545] text-white font-semibold rounded-lg"
+              className="py-3 px-10 bg-red-500 text-white font-semibold rounded-lg"
             >
               Simpan
             </button>

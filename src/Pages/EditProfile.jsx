@@ -176,7 +176,7 @@ const EditProfilePage = () => {
     }
   };
 
-  // const handleCancelCrop = () => {
+  // const handleBatalkanCrop = () => {
   //   setShowCropper(false);
   //   setFormData({ ...formData, fotoProfil: null });
   // };
@@ -229,7 +229,7 @@ const EditProfilePage = () => {
   };
 
   return (
-    <div className="bg-[#D24545] min-h-screen flex flex-col">
+    <div className="bg-red-500 min-h-screen flex flex-col">
       <Navbar />
       <div className=" w-full lg:w-[1100px] mx-auto bg-white rounded-2xl mt-32 mb-10 pb-6">
         <h1 className="text-3xl font-bold text-center py-8 border-b-2">
@@ -308,10 +308,10 @@ const EditProfilePage = () => {
               <div className="flex justify-between mt-4">
                 <button
                   type="button"
-                  onClick={handleCancelCrop}
+                  onClick={handleBatalkanCrop}
                   className="bg-red-600 text-white px-4 py-2 rounded"
                 >
-                  Cancel
+                  Batalkan
                 </button>
                 <button
                   type="button"

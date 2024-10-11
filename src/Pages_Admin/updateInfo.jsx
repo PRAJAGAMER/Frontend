@@ -66,6 +66,12 @@ function UpdateInfo() {
     setPreviewUrl(URL.createObjectURL(file)); // Create a preview URL for the selected file
   };
 
+  const handleBatalkan = () => {
+    setSelectedFile(null); // Clear the selected file
+    setPreviewUrl(null); // Clear the preview URL
+    fileInputRef.current.value = ""; // Reset the input file field
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -117,7 +123,6 @@ function UpdateInfo() {
     }
   };
 
-
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <HeaderAdmin className="relative z-20" />
@@ -125,7 +130,7 @@ function UpdateInfo() {
         <h3 className="text-3xl font-bold mb-8">Data Pelamar</h3>
         <div className="flex-1 flex flex-row justify-between">
           {/* Left Side: Uploaded Banner */}
-          <div className="bg-white p-4  w-[49%] rounded shadow">
+          <div className="bg-white p-4  w-[49%] rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-4">Banner Terunggah:</h3>
             {uploadedBannerUrl ? (
               <img
@@ -139,7 +144,7 @@ function UpdateInfo() {
           </div>
 
           {/* Right Side: Upload New Banner */}
-          <div className="bg-white p-4  w-[49%] rounded shadow">
+          <div className="bg-white p-4  w-[49%] rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-4">Upload Banner Baru:</h3>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -154,7 +159,7 @@ function UpdateInfo() {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="mt-2 p-4 border border-gray-300 rounded w-full"
+                  className="mt-2 p-4 border border-gray-300 rounded-lg w-full"
                   ref={fileInputRef}
                 />
               </div>
@@ -174,10 +179,19 @@ function UpdateInfo() {
                 </div>
               )}
 
-              <div className="flex justify-end">
+              <div className="flex justify-between">
+                {selectedFile && (
+                  <button
+                    type="button"
+                    onClick={handleBatalkan}
+                    className="bg-red-500 text-white px-8 py-2 rounded-lg hover:bg-red-600"
+                  >
+                    Batalkan
+                  </button>
+                )}
                 <button
                   type="submit"
-                  className={`bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 ${
+                  className={`bg-blue-500 text-white px-8 py-2 rounded-lg hover:bg-blue-600 ${
                     uploading ? "cursor-not-allowed opacity-50" : ""
                   }`}
                   disabled={uploading}
