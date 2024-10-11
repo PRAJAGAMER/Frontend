@@ -6,7 +6,8 @@ import {
   MagnifyingGlassIcon,
   ArrowDownIcon,
   ArrowUpIcon,
-} from "@heroicons/react/24/solid"; // Import ikon search dan arrow dari Heroicons
+  ArrowsRightLeftIcon,
+} from "@heroicons/react/24/solid";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 20]; // Opsi untuk jumlah item per halaman
 
@@ -249,6 +250,9 @@ const DataPengguna = () => {
                 )}
                 {sortOption === "oldest" && (
                   <ArrowUpIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "alphabetical" && (
+                  <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
                 )}
               </div>
             </div>

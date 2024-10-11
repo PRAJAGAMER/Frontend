@@ -6,7 +6,7 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
   ArrowsRightLeftIcon,
-} from "@heroicons/react/24/outline";
+} from "@heroicons/react/24/solid";
 import ModalTambahAdmin from "../ComponentsAdmin/modalTambahAdmin";
 
 function AkunAdmin() {
