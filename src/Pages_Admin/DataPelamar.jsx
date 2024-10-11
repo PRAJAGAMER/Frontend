@@ -6,7 +6,8 @@ import {
   MagnifyingGlassIcon,
   ArrowDownIcon,
   ArrowUpIcon,
-} from "@heroicons/react/24/solid"; // Import ikon search dan arrow dari Heroicons
+  ArrowsRightLeftIcon,
+} from "@heroicons/react/24/solid";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 20]; // Opsi untuk jumlah item per halaman
 
@@ -42,7 +43,9 @@ function DataPelamar() {
         if (data) {
           setPesertaData(data);
         } else {
-          console.warn("Data applicantsList tidak ditemukan dalam respons API.");
+          console.warn(
+            "Data applicantsList tidak ditemukan dalam respons API."
+          );
           setPesertaData([]);
         }
       } else {
@@ -114,11 +117,11 @@ function DataPelamar() {
   const sortedData = () => {
     if (sortOption === "newest") {
       return [...filteredData].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        (a, b) => new Date(b.Regist.updateAt) - new Date(a.Regist.updateAt)
       );
     } else if (sortOption === "oldest") {
       return [...filteredData].sort(
-        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        (a, b) => new Date(a.Regist.updateAt) - new Date(b.Regist.updateAt)
       );
     } else if (sortOption === "alphabetical") {
       return [...filteredData].sort((a, b) => a.name.localeCompare(b.name));
@@ -262,12 +265,9 @@ function DataPelamar() {
                     Berdasarkan Abjad
                   </option>
                 </select>
-                {sortOption === "newest" && (
-                  <ArrowDownIcon className="inline w-8 h-4 ml-2" />
-                )}
-                {sortOption === "oldest" && (
-                  <ArrowUpIcon className="inline w-8 h-4 ml-2" />
-                )}
+                {sortOption === "newest" && <ArrowDownIcon className="inline w-8 h-4 ml-2" />}
+                {sortOption === "oldest" && <ArrowUpIcon className="inline w-8 h-4 ml-2" />}
+                {sortOption === "alphabetical" && <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />}
               </div>
             </div>
 

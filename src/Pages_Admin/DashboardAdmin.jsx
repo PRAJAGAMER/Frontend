@@ -5,15 +5,15 @@ import {
   DocumentTextIcon,
   CheckCircleIcon,
   XCircleIcon,
-} from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom"; // Import Link dari react-router-dom
-import Sidebar from "../ComponentsAdmin/SidebarAdmin";
-import Header from "../ComponentsAdmin/HeaderAdmin";
-import {
   MagnifyingGlassIcon,
   ArrowDownIcon,
   ArrowUpIcon,
-} from "@heroicons/react/24/solid"; // Import Icon Search dan Sort
+  ArrowsRightLeftIcon,
+} from "@heroicons/react/24/solid";
+
+import { Link } from "react-router-dom"; // Import Link dari react-router-dom
+import Sidebar from "../ComponentsAdmin/SidebarAdmin";
+import Header from "../ComponentsAdmin/HeaderAdmin";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 20]; // Opsi untuk jumlah item per halaman
 
@@ -292,10 +292,13 @@ const DashboardAdmin = () => {
                       {sortOption === "oldest" && (
                         <ArrowUpIcon className="inline w-8 h-4 ml-2" />
                       )}
+                      {sortOption === "alphabetical" && (
+                        <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
+                      )}
                     </div>
                   </div>
 
-                  <Link to="/datapelamar">
+                  <Link to="/hasildaftarmagang">
                     <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                       Lihat Selengkapnya
                     </button>
