@@ -107,7 +107,7 @@ function UpdateInfo() {
       });
   
       if (response.ok) {
-        toast.success("Banner sudah berhasil diunggah.");
+        toast.success("Banner berhasil diunggah.");
         // Fetch the newly uploaded banner after successful upload
         fetchUploadedBanner();
         // Clear selected file and preview after successful upload
