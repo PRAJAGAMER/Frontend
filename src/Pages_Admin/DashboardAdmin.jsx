@@ -187,28 +187,28 @@ const DashboardAdmin = () => {
         ) : (
           <>
             <div className="grid grid-cols-4 gap-6">
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <UserGroupIcon className="h-16 w-16 text-blue-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Jumlah Lamaran</h3>
                   <p className="text-4xl">{totalApplicants}</p>
                 </div>
               </div>
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <DocumentTextIcon className="h-16 w-16 text-green-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Diproses</h3>
                   <p className="text-4xl">{verifyingApplicants}</p>
                 </div>
               </div>
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <CheckCircleIcon className="h-16 w-16 text-green-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Diterima</h3>
                   <p className="text-4xl">{acceptedApplicants}</p>
                 </div>
               </div>
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <XCircleIcon className="h-16 w-16 text-red-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Ditolak</h3>
@@ -217,7 +217,7 @@ const DashboardAdmin = () => {
               </div>
             </div>
 
-            <div className="mt-8 bg-white p-4 rounded shadow relative">
+            <div className="mt-8 bg-white p-4 rounded-lg shadow relative">
               <h3 className="text-3xl font-bold mb-5  border-b-2 pb-4 pt-2 mb-8">
                 Data Pelamar
               </h3>
@@ -229,7 +229,7 @@ const DashboardAdmin = () => {
                     <select
                       value={itemsPerPage}
                       onChange={handleItemsPerPageChange}
-                      className="border rounded p-1"
+                      className="border rounded-lg p-1"
                     >
                       {PAGE_SIZE_OPTIONS.map((size) => (
                         <option key={size} value={size}>
@@ -253,7 +253,7 @@ const DashboardAdmin = () => {
 
                   {/* Dropdown Sorting */}
                   <div className="relative inline-block">
-                    <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
+                    <div className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
                       <select
                         value={sortOption}
                         onChange={handleSortChange}
@@ -299,7 +299,7 @@ const DashboardAdmin = () => {
                   </div>
 
                   <Link to="/hasildaftarmagang">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                       Lihat Selengkapnya
                     </button>
                   </Link>
@@ -347,7 +347,7 @@ const DashboardAdmin = () => {
                           </td>
                           <td className="py-2 px-4 border-b flex flex-row">
                             <button
-                              className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600"
+                              className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded-lg hover:bg-green-600"
                               onClick={() =>
                                 handleUpdateStatus(
                                   peserta.user_id,
@@ -359,7 +359,7 @@ const DashboardAdmin = () => {
                               Terima
                             </button>
                             <button
-                              className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600"
+                              className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600"
                               onClick={() =>
                                 handleUpdateStatus(
                                   peserta.user_id,
@@ -394,7 +394,7 @@ const DashboardAdmin = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Sebelumnya
           </button>
@@ -404,7 +404,7 @@ const DashboardAdmin = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Selanjutnya
           </button>

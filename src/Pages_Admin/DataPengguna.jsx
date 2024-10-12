@@ -187,7 +187,7 @@ const DataPengguna = () => {
             <select
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
-              className="border rounded p-1"
+              className="border rounded-lg p-1"
             >
               {PAGE_SIZE_OPTIONS.map((size) => (
                 <option key={size} value={size}>
@@ -212,7 +212,7 @@ const DataPengguna = () => {
 
             {/* Dropdown Sorting */}
             <div className="relative inline-block">
-              <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
+              <div className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
                 <select
                   value={sortOption}
                   onChange={handleSortChange}
@@ -260,7 +260,7 @@ const DataPengguna = () => {
             {/* Tombol Export */}
             <button
               onClick={handleExportToExcel}
-              className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
             >
               Export to Excel
             </button>
@@ -268,7 +268,7 @@ const DataPengguna = () => {
         </div>
 
         {/* Data Table */}
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-4 rounded-lg shadow">
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead>
@@ -369,7 +369,7 @@ const DataPengguna = () => {
                         onClick={() =>
                           handleUpdateStatus(peserta.user_id, "Accepted", index)
                         }
-                        className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600 hover:underline"
+                        className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded-lg hover:bg-green-600 hover:underline"
                       >
                         Terima
                       </button>
@@ -377,7 +377,7 @@ const DataPengguna = () => {
                         onClick={() =>
                           handleUpdateStatus(peserta.user_id, "Rejected", index)
                         }
-                        className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600 hover:underline"
+                        className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600 hover:underline"
                       >
                         Tolak
                       </button>
@@ -394,7 +394,7 @@ const DataPengguna = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Sebelumnya
           </button>
@@ -404,7 +404,7 @@ const DataPengguna = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Selanjutnya
           </button>

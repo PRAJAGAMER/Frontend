@@ -249,7 +249,7 @@ const getMinEndDate = () => {
   };
 
   return (
-    <div className="bg-[#D24545] min-h-screen flex flex-col">
+    <div className="bg-red-500 min-h-screen flex flex-col">
       <Navbar />
       <div className="container mx-auto px-4 py-8 mt-24 mb-3 flex justify-center">
         <div className="bg-white rounded-lg shadow-lg p-6 w-full md:w-3/5">
@@ -458,7 +458,7 @@ const getMinEndDate = () => {
           <div className="mt-6">
             <div className="flex justify-center">
               <button
-                className="bg-[#D24545] w-64 h-12 text-white font-semibold py-2 px-4 rounded-2xl hover:bg-red-600"
+                className="bg-red-500 w-64 h-12 text-white font-semibold py-2 px-4 rounded-2xl hover:bg-red-600"
                 onClick={handleSubmit}
               >
                 Kirim

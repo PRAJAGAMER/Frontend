@@ -26,7 +26,7 @@ useEffect(() => {
   console.log("data profile baruuu  ", dataProfil);
 
   return (
-    <div className="bg-[#D24545] min-h-screen flex flex-col ">
+    <div className="bg-red-500 min-h-screen flex flex-col ">
       <Navbar />
       <div className="w-full  lg:w-[1100px] mx-auto bg-[#f6f6f6] rounded-2xl mt-32 mb-10 pb-6">
         <div className="relative">

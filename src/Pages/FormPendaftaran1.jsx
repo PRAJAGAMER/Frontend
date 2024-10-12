@@ -64,7 +64,7 @@ function FormPendaftaran1() {
   };
 
   return (
-    <div className="bg-[#D24545] min-h-screen flex flex-col">
+    <div className="bg-red-500 min-h-screen flex flex-col">
       <Navbar />
       <div className="container mx-auto mt-24 mb-3 px-4 py-8 flex justify-center">
         <div className="bg-white rounded-lg shadow-lg p-6 lg:w-3/5">
@@ -165,7 +165,7 @@ function FormPendaftaran1() {
             <div className="flex justify-center">
               <button
                 onClick={handleSubmit}
-                className="bg-[#D24545] w-64 h-12 text-white font-semibold py-2 px-4 rounded-2xl hover:bg-red-600"
+                className="bg-red-500 w-64 h-12 text-white font-semibold py-2 px-4 rounded-2xl hover:bg-red-600"
               >
                 Selanjutnya
               </button>

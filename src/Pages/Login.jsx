@@ -96,7 +96,7 @@ const Login = () => {
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
-      <div className="absolute rounded-t-xl lg:relative z-10 flex justify-center items-center bg-white lg:bg-transparent py-5 md:rounded-md md:h-[500px] md:w-[500px] lg:w-3/6 mt-48 md:mt-52 lg:mt-32 lg:ml-0 md:ml-32">
+      <div className="absolute rounded-t-xl lg:relative z-10 flex justify-center items-center bg-white lg:bg-transparent py-5 md:rounded-lg md:h-[500px] md:w-[500px] lg:w-3/6 mt-48 md:mt-52 lg:mt-32 lg:ml-0 md:ml-32">
         <div className="max-w-md w-full px-8">
           <div className="flex items-center mb-6">
             <img src={Logo} alt="Logo" className="h-16 mr-4" />
@@ -168,9 +168,7 @@ const Login = () => {
                 {passwordError && <p>{passwordError}</p>}
               </div>
             </div>
-            <button className="w-full p-3 bg-[#D24545] text-white font-bold rounded-lg hover:bg-red-700 transition mt-5">
-              Masuk
-            </button>
+            <button className="w-full p-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700 transition mt-5">Masuk</button>
           </form>
 
           <p className="mt-6 text-center text-gray-600">
