@@ -310,7 +310,7 @@ const DashboardAdmin = () => {
                 <table className="min-w-full bg-white">
                   <thead>
                     <tr>
-                      <th className="py-2 pb-4 border-b w-[25%] text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
                         Nama
                       </th>
                       <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
@@ -322,7 +322,7 @@ const DashboardAdmin = () => {
                       <th className="py-2 pb-4 border-b w-[10%] text-sm font-semibold text-gray-600">
                         Status
                       </th>
-                      <th className="py-2 pb-4 border-b w-[25%] text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
                         Aksi
                       </th>
                     </tr>
