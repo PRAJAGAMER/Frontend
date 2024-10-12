@@ -23,7 +23,8 @@ function AkunAdmin() {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
-      window.location.href = "/loginadmin"; // Redirect to login page if no token
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
     } else {
       fetchAdminData();
     }
@@ -33,6 +34,7 @@ function AkunAdmin() {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
       window.location.href = "/loginadmin";
       return;
     }
@@ -45,7 +47,13 @@ function AkunAdmin() {
       });
 
       if (!response.ok) {
-        throw new Error("Gagal mengambil data admin");
+        if (response.status === 401) {
+          setError("Akses tidak diizinkan. Silakan login ulang.");
+          localStorage.removeItem("token"); // Hapus token jika tidak valid
+          window.location.href = "/loginadmin"; // Redirect ke halaman login
+        } else {
+          throw new Error("Gagal mengambil data admin");
+        }
       }
 
       const data = await response.json();
@@ -117,9 +125,13 @@ function AkunAdmin() {
 
   const sortData = (data) => {
     if (sortOption === "newest") {
-      return [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return [...data].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
     } else if (sortOption === "oldest") {
-      return [...data].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      return [...data].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
     } else if (sortOption === "alphabetical") {
       return [...data].sort((a, b) => a.admin_name.localeCompare(b.admin_name));
     }
@@ -157,11 +169,15 @@ function AkunAdmin() {
       <HeaderAdmin className="relative z-20" />
 
       <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
-      <h3 className="text-3xl font-bold mb-5">Akun Admin</h3>
+        <h3 className="text-3xl font-bold mb-5">Akun Admin</h3>
         <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2 font-semibold text-md">
+          <div className="flex items-center space-x-2 font-semibold text-md">
             <span>Jumlah setiap halaman</span>
-            <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="border rounded-lg p-1">
+            <select
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+              className="border rounded-lg p-1"
+            >
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={15}>15</option>
@@ -195,19 +211,34 @@ function AkunAdmin() {
                   }}
                   className="flex-grow appearance-none focus:outline-none font-semibold"
                 >
-                  <option value="newest" style={{ backgroundColor: "white", color: "black" }}>
+                  <option
+                    value="newest"
+                    style={{ backgroundColor: "white", color: "black" }}
+                  >
                     Data Terbaru
                   </option>
-                  <option value="oldest" style={{ backgroundColor: "white", color: "black" }}>
+                  <option
+                    value="oldest"
+                    style={{ backgroundColor: "white", color: "black" }}
+                  >
                     Data Terlama
                   </option>
-                  <option value="alphabetical" style={{ backgroundColor: "white", color: "black" }}>
+                  <option
+                    value="alphabetical"
+                    style={{ backgroundColor: "white", color: "black" }}
+                  >
                     Berdasarkan Abjad
                   </option>
                 </select>
-                {sortOption === "newest" && <ArrowDownIcon className="inline w-8 h-4 ml-2" />}
-                {sortOption === "oldest" && <ArrowUpIcon className="inline w-8 h-4 ml-2" />}
-                {sortOption === "alphabetical" && <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />}
+                {sortOption === "newest" && (
+                  <ArrowDownIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "oldest" && (
+                  <ArrowUpIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "alphabetical" && (
+                  <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
+                )}
               </div>
             </div>
 
@@ -219,13 +250,21 @@ function AkunAdmin() {
               Tambah Admin
             </button>
 
-            <ModalTambahAdmin isOpen={isModalOpen} onClose={handleCloseModal} onAddAdmin={handleAddAdmin} />
+            <ModalTambahAdmin
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onAddAdmin={handleAddAdmin}
+            />
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow overflow-x-auto">
-          <div className="w-full mx-auto"> {/* Set the fixed-width container */}
-            <table className="min-w-full bg-white table-fixed"> {/* Added table-fixed class for equal-width columns */}
+          <div className="w-full mx-auto">
+            {" "}
+            {/* Set the fixed-width container */}
+            <table className="min-w-full bg-white table-fixed">
+              {" "}
+              {/* Added table-fixed class for equal-width columns */}
               <thead>
                 <tr>
                   <th className="py-2 pb-4 border-b w-1/5">Nama</th>
@@ -235,7 +274,6 @@ function AkunAdmin() {
                   <th className="py-2 pb-4 border-b w-1/5">Aksi</th>
                 </tr>
               </thead>
-
               <tbody>
                 {currentItems.length > 0 ? (
                   currentItems.map((admin) => (
@@ -256,7 +294,9 @@ function AkunAdmin() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-4">Tidak ada data admin</td>
+                    <td colSpan="5" className="text-center py-4">
+                      Tidak ada data admin
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -283,8 +323,8 @@ function AkunAdmin() {
             Selanjutnya
           </button>
         </div>
-        </div>
       </div>
+    </div>
   );
 }
 
