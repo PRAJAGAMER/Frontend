@@ -9,6 +9,8 @@ import "cropperjs/dist/cropper.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getDataProfil, postUpdateProfil } from "../redux/Action/profileAction";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditProfilePage = () => {
   const dispatch = useDispatch();
@@ -167,10 +169,43 @@ const EditProfilePage = () => {
 
   const handleImageChange = (file) => {
     if (file) {
-      const previewUrl = URL.createObjectURL(file); // Buat URL sementara untuk preview gambar
+      // Validasi format file
+      const validFormats = ['image/png', 'image/jpeg', 'image/jpg'];
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+  
+      if (!validFormats.includes(file.type)) {
+        toast.error("Format foto tidak valid! Harus PNG, JPG, atau JPEG.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        return; // Keluar dari fungsi jika format tidak valid
+      }
+  
+      if (file.size > maxSizeInBytes) {
+        toast.error("Ukuran foto terlalu besar! Maksimal 5MB.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        return; // Keluar dari fungsi jika ukuran file tidak valid
+      }
+  
+      // Jika validasi lulus, buat URL untuk preview gambar
+      const previewUrl = URL.createObjectURL(file);
       setFormData((prev) => ({
         ...prev,
-        fotoProfil: file, // Set URL sementara untuk menampilkan gambar baru
+        fotoProfil: file, // Set file yang valid
         previewFoto: previewUrl,
       }));
     }

@@ -260,14 +260,14 @@ const layananTPDK = () => {
         <h2 className="text-4xl font-bold mb-4 text-center pb-3 border-b-4 border-[#C54441]">
           {name}
         </h2>
-        <div className="flex justify-between py-5">
-          <div className="flex w-1/2 items-start">
+        <div className="flex flex-col-reverse sm:flex-col md:flex-row lg:flex-row-reverse lg:justify-between py-5">
+          <div className="flex lg:w-1/2 items-start">
             <div className="ml-4">
               <p className="text-lg font-bold">Alamat :</p>
               <p>{subdistrict?.address}</p>
             </div>
           </div>
-          <div className="flex items-start">
+          <div className="hidden lg:flex lg:items-start">
             <img src={Logo} alt="" className="h-11 mt-2" />
             <div className="flex flex-col">
               <p className="text-lg font-bold">
@@ -277,9 +277,9 @@ const layananTPDK = () => {
             </div>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex flex-col-reverse sm:flex-col md:flex-row lg:flex-row">
           {/* Google Maps */}
-          <div className="w-1/2 pr-4">
+          <div className="pt-5 lg:pt-0 md:w-1/2 md:pr-5 md:pt-0 lg:w-1/2 lg:pr-4">
             <div className="mb-6">
               <iframe
                 src={mapUrl}
