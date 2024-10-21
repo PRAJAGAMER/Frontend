@@ -74,30 +74,30 @@ function UpdateInfo() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (!selectedFile) {
       toast.error("Harap pilih file untuk diunggah.");
       return;
     }
-
+  
     if (selectedFile.size > 5 * 1024 * 1024) {
       toast.error("Ukuran file terlalu besar. Maksimum 5MB.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("banner", selectedFile);
     formData.append("bannerName", bannerName); // Include banner name
-
+  
     try {
       const token = getToken();
       if (!token) {
         toast.error("Token tidak ditemukan. Silakan login kembali.");
         return;
       }
-
+  
       setUploading(true);
-
+  
       const response = await fetch("http://localhost:5000/api/banner", {
         method: "PUT",
         headers: {
@@ -105,11 +105,15 @@ function UpdateInfo() {
         },
         body: formData,
       });
-
+  
       if (response.ok) {
-        toast.success("Banner sudah berhasil diunggah.");
+        toast.success("Banner berhasil diunggah.");
         // Fetch the newly uploaded banner after successful upload
         fetchUploadedBanner();
+        // Clear selected file and preview after successful upload
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        fileInputRef.current.value = ""; // Reset file input field
       } else {
         const errorMessage = await response.text();
         console.error("Error uploading file:", errorMessage);

@@ -24,7 +24,8 @@ const DataPengguna = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
-      window.location.href = "/loginadmin"; // Redirect to login page if no token
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
     } else {
       fetchData(token); // Fetch data if token exists
     }
@@ -37,9 +38,17 @@ const DataPengguna = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setPesertaData(response.data);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      if (error.response && error.response.status === 401) {
+        // Jika token tidak valid, hapus token dan redirect ke login
+        setError("Akses tidak diizinkan. Silakan login ulang.");
+        localStorage.removeItem("token"); // Hapus token
+        window.location.href = "/loginadmin"; // Redirect ke halaman login
+      } else {
+        console.error("Error fetching user data:", error);
+      }
     }
   };
 

@@ -25,7 +25,8 @@ function DataPelamar() {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
-      window.location.href = "/loginadmin"; // Redirect to login page if no token
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
     } else {
       fetchPesertaData(token);
     }
@@ -49,6 +50,11 @@ function DataPelamar() {
           );
           setPesertaData([]);
         }
+      } else if (response.status === 401) {
+        // Jika token tidak valid, hapus token dan redirect ke login
+        setError("Akses tidak diizinkan. Silakan login ulang.");
+        localStorage.removeItem("token"); // Hapus token
+        window.location.href = "/loginadmin"; // Redirect ke halaman login
       } else {
         console.error("Failed to fetch data:", response.statusText);
       }
