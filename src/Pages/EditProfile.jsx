@@ -4,7 +4,7 @@ import Navbar from "../Components/navbar";
 import Footer from "../Components/Footer";
 import Profile from "../assets/Pictures/logodisdukcapil.png";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
-import Cropper from "react-cropper";
+// import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -67,7 +67,7 @@ const EditProfilePage = () => {
   const token = useSelector((state) => state.auth.token);
   useEffect(() => {
     if (!token) {
-      navigate("/login");
+      navigate("/loginopsi");
     }
   });
 
@@ -545,8 +545,9 @@ const EditProfilePage = () => {
                     type="text"
                     name="jurusan"
                     value={formData.jurusan}
-                    onChange={handleChange}
-                    className="w-full border rounded px-3 py-2"
+                   
+                    readOnly
+                    className="w-full border rounded px-3 py-2 cursor-not-allowed"
                   />
                 </div>
                 <div className="mt-4">

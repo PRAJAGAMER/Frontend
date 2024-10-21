@@ -18,6 +18,7 @@ const DataPengguna = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10); // State untuk jumlah item per halaman
   const [sortOption, setSortOption] = useState("newest"); // State untuk sorting
   const [error, setError] = useState(null); // State for error handling
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,18 +63,36 @@ const DataPengguna = () => {
     XLSX.writeFile(workbook, "Data_Pengguna_Magang.xlsx");
   };
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+
+    // Menggabungkan fungsi handleSortChange dan handleDropdownToggle
+    const handleDropdownToggle = () => {
+      setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown open/close
+    };
+  
+    // Memperbarui handleSortChange agar menerima event dari dropdown dan close dropdown setelah perubahan
+    const handleSortChange = (e) => {
+      const selectedOption = e.target ? e.target.value : e; // Check if event or direct option is passed
+      setSortOption(selectedOption); // Update the sorting option
+      setIsDropdownOpen(false); // Close the dropdown after selecting
+    };
+  
+    // Mengelola perubahan halaman
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber); // Update the current page
+    };
+  
+    const sortOptions = [
+      { value: "newest", label: "Data Terbaru" },
+      { value: "oldest", label: "Data Terlama" },
+      { value: "alphabetical", label: "Berdasarkan Abjad" },
+    ];
+
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
 
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
 
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(parseInt(e.target.value, 10));
@@ -210,41 +229,19 @@ const DataPengguna = () => {
               <MagnifyingGlassIcon className="absolute left-2 top-2 w-6 h-6 text-gray-400" />
             </div>
 
-            {/* Dropdown Sorting */}
-            <div className="relative inline-block">
-              <div className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
-                <select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  style={{
-                    color: "white",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                    outline: "none",
-                    border: "none",
-                    width: "100%",
-                  }}
-                  className="flex-grow appearance-none focus:outline-none font-semibold"
-                >
-                  <option
-                    value="newest"
-                    style={{ backgroundColor: "white", color: "black" }}
-                  >
-                    Data Terbaru
-                  </option>
-                  <option
-                    value="oldest"
-                    style={{ backgroundColor: "white", color: "black" }}
-                  >
-                    Data Terlama
-                  </option>
-                  <option
-                    value="alphabetical"
-                    style={{ backgroundColor: "white", color: "black" }}
-                  >
-                    Berdasarkan Abjad
-                  </option>
-                </select>
+               {/* Dropdown Sorting */}
+               <div className="relative inline-block">
+              {/* Wrapper div for the dropdown */}
+              <div
+                className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px]cursor-pointer"
+                onClick={handleDropdownToggle} // This will toggle dropdown on click
+              >
+                <span>
+                  {
+                    sortOptions.find((option) => option.value === sortOption)
+                      ?.label
+                  }
+                </span>
                 {sortOption === "newest" && (
                   <ArrowDownIcon className="inline w-8 h-4 ml-2" />
                 )}
@@ -255,6 +252,23 @@ const DataPengguna = () => {
                   <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
                 )}
               </div>
+
+              {/* Dropdown content */}
+              {isDropdownOpen && (
+                <div className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg">
+                  <ul>
+                    {sortOptions.map((option) => (
+                      <li
+                        key={option.value}
+                        onClick={() => handleSortChange(option.value)}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
+                        {option.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Tombol Export */}

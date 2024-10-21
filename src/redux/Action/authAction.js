@@ -102,7 +102,7 @@ export const register = (data, navigate) => async (dispatch, getState) => {
     if (response.status === 201) {
       console.log("Register Berhasil:", response);
       alert("Registrasi berhasil!");
-      navigate("/login");
+      navigate("/loginopsi");
     }
   } catch (error) {
     // Penanganan kesalahan saat melakukan permintaan

@@ -14,60 +14,51 @@ const LoginAdmin = () => {
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
 
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    setPasswordError("");
+  };
+
+  const handlePasswordNip = (e) => {
+    setNip(e.target.value);
+    setNipError("");
+
+    const input = e.target.value;
+
+    // Cek apakah input hanya mengandung angka
+    const isNumeric = /^[0-9]*$/.test(input);
+
+    // Validasi: hanya angka diperbolehkan dan maksimal 16 digit
+    if (isNumeric && input.length <= 18) {
+      setNip(input);
+      setNipError(""); // Hapus pesan error jika input valid
+    } else {
+      setNipError("NIK harus berupa angka dan maksimal 18 digit.");
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message
-    setNipError("");
-    setPasswordError("");
-
     let hasError = false;
 
-    // Validasi NIP Kosong
+    // Validasi NIp Kosong
     if (!nip || nip.trim() === "") {
       setNipError("NIP harus diisi.");
-      toast.error("NIP harus diisi.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
       hasError = true;
-    }
-
-    // Validasi Format NIP (hanya angka)
-    const nipRegex = /^[0-9]+$/;
-    if (!nipRegex.test(nip)) {
-      setNipError("Format NIP harus berupa angka.");
-      toast.error("Format NIP harus berupa angka.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      hasError = true;
+    } else {
+      // Validasi Format NIp (hanya angka)
+      const nipRegex = /^[0-9]+$/;
+      if (!nipRegex.test(nip)) {
+        setNipError("Format NIP harus berupa angka.");
+        hasError = true;
+      } else {
+        setNipError(""); // Clear error if NIp is valid
+      }
     }
 
     // Validasi Password Kosong
     if (!password || password.trim() === "") {
       setPasswordError("Password harus diisi.");
-      toast.error("Password harus diisi.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
       hasError = true;
     }
 
@@ -75,21 +66,28 @@ const LoginAdmin = () => {
 
     try {
       // Login request
-      const loginResponse = await axios.post("http://localhost:5000/api/admin/login", {
-        nip,
-        password,
-      });
+      const loginResponse = await axios.post(
+        "http://localhost:5000/api/admin/login",
+        {
+          nip,
+          password,
+        }
+      );
 
       if (loginResponse.status === 200) {
         const token = loginResponse.data.token;
         localStorage.setItem("token", token);
 
-        const adminResponse = await axios.get("http://localhost:5000/api/admins", {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { nip },
-        });
+        const adminResponse = await axios.get(
+          "http://localhost:5000/api/admins",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { nip },
+          }
+        );
 
-        const adminName = adminResponse.data.adminName || adminResponse.data.name || "Admin";
+        const adminName =
+          adminResponse.data.adminName || adminResponse.data.name || "Admin";
         localStorage.setItem("adminName", adminName);
 
         toast.success("Login Berhasil", {
@@ -154,14 +152,22 @@ const LoginAdmin = () => {
   return (
     <div className="flex h-screen w-screen">
       {/* Bagian Gambar untuk Desktop */}
-      <div className="hidden lg:flex lg:w-3/4 h-full bg-cover bg-center" style={{ backgroundImage: `url(${Photo})` }}>
+      <div
+        className="hidden lg:flex lg:w-3/4 h-full bg-cover bg-center"
+        style={{ backgroundImage: `url(${Photo})` }}
+      >
         <div className="flex items-center justify-center w-full h-full bg-black bg-opacity-40">
-          <h1 className="text-white text-3xl font-bold">Mudah, Cepat, Akurat Tanpa Pungutan</h1>
+          <h1 className="text-white text-3xl font-bold">
+            Mudah, Cepat, Akurat Tanpa Pungutan
+          </h1>
         </div>
       </div>
 
       {/* Bagian Gambar untuk Mobile */}
-      <div className="relative flex lg:hidden w-full h-screen bg-cover bg-center" style={{ backgroundImage: `url(${Photo})` }}>
+      <div
+        className="relative flex lg:hidden w-full h-screen bg-cover bg-center"
+        style={{ backgroundImage: `url(${Photo})` }}
+      >
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
 
@@ -172,9 +178,12 @@ const LoginAdmin = () => {
             <img src={Logo} alt="Logo" className="h-16 mr-4" />
             <div>
               <h2 className="text-3xl font-bold text-left text-gray-800">
-                <span className="text-black">Masuk Akun</span> <span style={{ color: "#D24545" }}>Admin</span>
+                <span className="text-black">Masuk Akun</span>{" "}
+                <span style={{ color: "#D24545" }}>Admin</span>
               </h2>
-              <p className="font-bold text-left text-gray-800">Silahkan Masuk Ke Akun Anda</p>
+              <p className="font-bold text-left text-gray-800">
+                Silahkan Masuk Ke Akun Anda
+              </p>
             </div>
           </div>
 
@@ -182,39 +191,63 @@ const LoginAdmin = () => {
 
           <form onSubmit={handleLogin} noValidate>
             <div className="mb-4">
-              <label htmlFor="nip" className="block text-gray-700 text-left">NIP</label>
+              <label htmlFor="nip" className="block text-gray-700 text-left">
+                NIP
+              </label>
               <input
                 type="text"
                 id="nip"
                 value={nip}
-                onChange={(e) => setNip(e.target.value)}
-                className={`w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] ${nipError ? "border-red-500" : "border-gray-300"}`}
+                onChange={handlePasswordNip}
+                className={`w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] ${
+                  nipError ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="NIP"
                 required
+                maxLength={18}
               />
-              {nipError && <p className="text-red-500 text-sm mt-[5px]">{nipError}</p>}
+              {nipError && (
+                <p className="text-red-500 text-sm mt-[5px]">{nipError}</p>
+              )}
             </div>
 
             <div className="mb-6 relative">
-              <label htmlFor="password" className="block text-gray-700 text-left">Password</label>
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-left"
+              >
+                Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12 ${passwordError ? "border-red-500" : "border-gray-300"}`}
+                onChange={handlePasswordChange}
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12 ${
+                  passwordError ? "border-red-500" : "border-gray-300"
+                }`}
                 placeholder="Password"
                 required
               />
-              <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 pt-5">
-                {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 pt-5"
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
               </button>
               <div className="absolute -bottom-6 text-red-500 text-sm">
                 {passwordError && <p>{passwordError}</p>}
               </div>
             </div>
 
-            <button className="w-full p-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700 transition mt-5">Masuk</button>
+            <button className="w-full p-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700 transition mt-5">
+              Masuk
+            </button>
           </form>
         </div>
       </div>

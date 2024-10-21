@@ -32,12 +32,12 @@ function FormPendaftaran2() {
   const formKetersediaan = useSelector(
     (state) => state.pendaftaran.dataFormPendaf.ketersediaanPenempatan
   );
-  // console.log("ketersediaan tempat",formKetersediaan)
+  console.log("ketersediaan tempat",formKetersediaan)
 
   // Redirect to login if token is not present
   useEffect(() => {
     if (!token) {
-      navigate("/login");
+      navigate("/loginopsi");
     }
   }, [token, navigate]); // Run effect when token or navigate changes
 
@@ -99,7 +99,7 @@ const getMinEndDate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Validation
     if (
       !formKetersediaan ||
@@ -120,7 +120,7 @@ const getMinEndDate = () => {
       });
       return; // Tambahkan return agar fungsi berhenti jika validasi gagal
     }
-
+  
     // Validation
     if (!isChecked) {
       toast.warn("Harap centang syarat dan ketentuan!", {
@@ -135,7 +135,7 @@ const getMinEndDate = () => {
       });
       return; // Tambahkan return agar fungsi berhenti jika validasi gagal
     }
-
+  
     // Prepare data
     let data = {
       available_space: formKetersediaan,
@@ -143,14 +143,16 @@ const getMinEndDate = () => {
       last_period: formData2?.durasiAkhir,
       recommend_letter: formData2.suratRekomendasi,
       cv: formData2?.cv,
-      portofolio: formData2?.portofolio,
+      // Hanya tambahkan portofolio jika ada
+      ...(formData2.portofolio && { portofolio: formData2.portofolio }),
     };
-
+  
     console.log("data handle submit", data);
-
+  
     // Dispatch action
     dispatch(postPendaftaranMagang(data, navigate));
   };
+  
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
 
@@ -360,7 +362,7 @@ const getMinEndDate = () => {
 
               {/* Link Portofolio (Opsional) */}
               <div className="border rounded p-4 mb-4">
-                <label className="font-semibold block mb-2">Portofolio</label>
+                <label className="font-semibold block mb-2">Portofolio (Opsional)</label>
                 <p className="text-gray-500 text-sm mb-4">
                   Silahkan unggah surat kamu
                 </p>

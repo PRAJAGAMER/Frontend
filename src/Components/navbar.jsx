@@ -132,7 +132,7 @@ const Navbar = () => {
               {!token ? (
                 <button
                   className="block w-full px-8 py-2 mt-4 bg-red-500 text-xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate("/loginopsi")}
                 >
                   Masuk
                 </button>
@@ -243,7 +243,7 @@ const Navbar = () => {
         {!token ? (
           <button
             className="hidden lg:block px-8 py-2 bg-red-500 text-2xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/loginopsi")}
           >
             Masuk
           </button>

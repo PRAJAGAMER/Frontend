@@ -13,7 +13,7 @@ const ProfilePage = () => {
   const token = useSelector((state) => state.auth.token);
   useEffect(() => {
     if (!token) {
-      navigate("/login");
+      navigate("/loginopsi");
     }
   });
   
