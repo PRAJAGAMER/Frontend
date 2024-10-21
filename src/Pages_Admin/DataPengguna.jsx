@@ -18,12 +18,14 @@ const DataPengguna = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10); // State untuk jumlah item per halaman
   const [sortOption, setSortOption] = useState("newest"); // State untuk sorting
   const [error, setError] = useState(null); // State for error handling
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
-      window.location.href = "/loginadmin"; // Redirect to login page if no token
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
     } else {
       fetchData(token); // Fetch data if token exists
     }
@@ -36,9 +38,17 @@ const DataPengguna = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setPesertaData(response.data);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      if (error.response && error.response.status === 401) {
+        // Jika token tidak valid, hapus token dan redirect ke login
+        setError("Akses tidak diizinkan. Silakan login ulang.");
+        localStorage.removeItem("token"); // Hapus token
+        window.location.href = "/loginadmin"; // Redirect ke halaman login
+      } else {
+        console.error("Error fetching user data:", error);
+      }
     }
   };
 
@@ -62,18 +72,36 @@ const DataPengguna = () => {
     XLSX.writeFile(workbook, "Data_Pengguna_Magang.xlsx");
   };
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+
+    // Menggabungkan fungsi handleSortChange dan handleDropdownToggle
+    const handleDropdownToggle = () => {
+      setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown open/close
+    };
+  
+    // Memperbarui handleSortChange agar menerima event dari dropdown dan close dropdown setelah perubahan
+    const handleSortChange = (e) => {
+      const selectedOption = e.target ? e.target.value : e; // Check if event or direct option is passed
+      setSortOption(selectedOption); // Update the sorting option
+      setIsDropdownOpen(false); // Close the dropdown after selecting
+    };
+  
+    // Mengelola perubahan halaman
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber); // Update the current page
+    };
+  
+    const sortOptions = [
+      { value: "newest", label: "Data Terbaru" },
+      { value: "oldest", label: "Data Terlama" },
+      { value: "alphabetical", label: "Berdasarkan Abjad" },
+    ];
+
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
 
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
 
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(parseInt(e.target.value, 10));
@@ -187,7 +215,7 @@ const DataPengguna = () => {
             <select
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
-              className="border rounded p-1"
+              className="border rounded-lg p-1"
             >
               {PAGE_SIZE_OPTIONS.map((size) => (
                 <option key={size} value={size}>
@@ -210,41 +238,19 @@ const DataPengguna = () => {
               <MagnifyingGlassIcon className="absolute left-2 top-2 w-6 h-6 text-gray-400" />
             </div>
 
-            {/* Dropdown Sorting */}
-            <div className="relative inline-block">
-              <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
-                <select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  style={{
-                    color: "white",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                    outline: "none",
-                    border: "none",
-                    width: "100%",
-                  }}
-                  className="flex-grow appearance-none focus:outline-none font-semibold"
-                >
-                  <option
-                    value="newest"
-                    style={{ backgroundColor: "white", color: "black" }}
-                  >
-                    Data Terbaru
-                  </option>
-                  <option
-                    value="oldest"
-                    style={{ backgroundColor: "white", color: "black" }}
-                  >
-                    Data Terlama
-                  </option>
-                  <option
-                    value="alphabetical"
-                    style={{ backgroundColor: "white", color: "black" }}
-                  >
-                    Berdasarkan Abjad
-                  </option>
-                </select>
+               {/* Dropdown Sorting */}
+               <div className="relative inline-block">
+              {/* Wrapper div for the dropdown */}
+              <div
+                className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px]cursor-pointer"
+                onClick={handleDropdownToggle} // This will toggle dropdown on click
+              >
+                <span>
+                  {
+                    sortOptions.find((option) => option.value === sortOption)
+                      ?.label
+                  }
+                </span>
                 {sortOption === "newest" && (
                   <ArrowDownIcon className="inline w-8 h-4 ml-2" />
                 )}
@@ -255,12 +261,29 @@ const DataPengguna = () => {
                   <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
                 )}
               </div>
+
+              {/* Dropdown content */}
+              {isDropdownOpen && (
+                <div className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg">
+                  <ul>
+                    {sortOptions.map((option) => (
+                      <li
+                        key={option.value}
+                        onClick={() => handleSortChange(option.value)}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
+                        {option.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Tombol Export */}
             <button
               onClick={handleExportToExcel}
-              className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
             >
               Export to Excel
             </button>
@@ -268,7 +291,7 @@ const DataPengguna = () => {
         </div>
 
         {/* Data Table */}
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-4 rounded-lg shadow">
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
               <thead>
@@ -369,7 +392,7 @@ const DataPengguna = () => {
                         onClick={() =>
                           handleUpdateStatus(peserta.user_id, "Accepted", index)
                         }
-                        className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600 hover:underline"
+                        className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded-lg hover:bg-green-600 hover:underline"
                       >
                         Terima
                       </button>
@@ -377,7 +400,7 @@ const DataPengguna = () => {
                         onClick={() =>
                           handleUpdateStatus(peserta.user_id, "Rejected", index)
                         }
-                        className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600 hover:underline"
+                        className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600 hover:underline"
                       >
                         Tolak
                       </button>
@@ -394,7 +417,7 @@ const DataPengguna = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Sebelumnya
           </button>
@@ -404,7 +427,7 @@ const DataPengguna = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Selanjutnya
           </button>

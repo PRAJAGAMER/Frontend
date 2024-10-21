@@ -28,6 +28,7 @@ const DashboardAdmin = () => {
   const [sortOption, setSortOption] = useState("newest"); // State untuk sorting
   const [itemsPerPage, setItemsPerPage] = useState(10); // State untuk jumlah item per halaman
   const [currentPage, setCurrentPage] = useState(1); // State untuk halaman saat ini
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,20 +75,38 @@ const DashboardAdmin = () => {
     setCurrentPage(1); // Reset halaman ke 1 saat pencarian
   };
 
+  // Menggabungkan fungsi handleSortChange dan handleDropdownToggle
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown open/close
+  };
+
+  // Memperbarui handleSortChange agar menerima event dari dropdown dan close dropdown setelah perubahan
   const handleSortChange = (e) => {
-    setSortOption(e.target.value);
+    const selectedOption = e.target ? e.target.value : e; // Check if event or direct option is passed
+    setSortOption(selectedOption); // Update the sorting option
+    setIsDropdownOpen(false); // Close the dropdown after selecting
   };
 
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(parseInt(e.target.value, 10));
-    setCurrentPage(1); // Reset halaman ke 1 saat jumlah item per halaman berubah
-  };
+ // Opsi urutan sort
+const sortOptions = [
+  { value: "newest", label: "Data Terbaru" },
+  { value: "oldest", label: "Data Terlama" },
+  { value: "alphabetical", label: "Berdasarkan Abjad" },
+];
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+// Mengubah jumlah item per halaman dan reset halaman ke 1
+const handleItemsPerPageChange = (e) => {
+  setItemsPerPage(parseInt(e.target.value, 10)); // Mengubah jumlah item per halaman
+  setCurrentPage(1); // Reset halaman ke 1 saat jumlah item per halaman berubah
+};
+
+// Mengelola perubahan halaman dengan validasi batas halaman
+const handlePageChange = (newPage) => {
+  if (newPage >= 1 && newPage <= totalPages) {
+    setCurrentPage(newPage); // Update halaman jika dalam rentang yang valid
+  }
+};
+
 
   // Filter data berdasarkan query pencarian
   const filteredApplicants = applicantsData.filter(
@@ -187,28 +206,28 @@ const DashboardAdmin = () => {
         ) : (
           <>
             <div className="grid grid-cols-4 gap-6">
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <UserGroupIcon className="h-16 w-16 text-blue-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Jumlah Lamaran</h3>
                   <p className="text-4xl">{totalApplicants}</p>
                 </div>
               </div>
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <DocumentTextIcon className="h-16 w-16 text-green-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Diproses</h3>
                   <p className="text-4xl">{verifyingApplicants}</p>
                 </div>
               </div>
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <CheckCircleIcon className="h-16 w-16 text-green-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Diterima</h3>
                   <p className="text-4xl">{acceptedApplicants}</p>
                 </div>
               </div>
-              <div className="bg-white p-8 rounded shadow flex items-center">
+              <div className="bg-white p-8 rounded-lg shadow flex items-center">
                 <XCircleIcon className="h-16 w-16 text-red-500 mr-4" />
                 <div>
                   <h3 className="text-xl font-bold">Lamaran Ditolak</h3>
@@ -217,7 +236,7 @@ const DashboardAdmin = () => {
               </div>
             </div>
 
-            <div className="mt-8 bg-white p-4 rounded shadow relative">
+            <div className="mt-8 bg-white p-4 rounded-lg shadow relative">
               <h3 className="text-3xl font-bold mb-5  border-b-2 pb-4 pt-2 mb-8">
                 Data Pelamar
               </h3>
@@ -229,7 +248,7 @@ const DashboardAdmin = () => {
                     <select
                       value={itemsPerPage}
                       onChange={handleItemsPerPageChange}
-                      className="border rounded p-1"
+                      className="border rounded-lg p-1"
                     >
                       {PAGE_SIZE_OPTIONS.map((size) => (
                         <option key={size} value={size}>
@@ -251,55 +270,49 @@ const DashboardAdmin = () => {
                     <MagnifyingGlassIcon className="absolute left-2 top-2 w-5 h-5 text-gray-400" />
                   </div>
 
-                  {/* Dropdown Sorting */}
-                  <div className="relative inline-block">
-                    <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
-                      <select
-                        value={sortOption}
-                        onChange={handleSortChange}
-                        style={{
-                          color: "white",
-                          backgroundColor: "transparent",
-                          cursor: "pointer",
-                          outline: "none",
-                          border: "none",
-                          width: "100%",
-                        }}
-                        className="flex-grow appearance-none focus:outline-none font-semibold"
-                      >
-                        <option
-                          value="newest"
-                          style={{ backgroundColor: "white", color: "black" }}
-                        >
-                          Data Terbaru
-                        </option>
-                        <option
-                          value="oldest"
-                          style={{ backgroundColor: "white", color: "black" }}
-                        >
-                          Data Terlama
-                        </option>
-                        <option
-                          value="alphabetical"
-                          style={{ backgroundColor: "white", color: "black" }}
-                        >
-                          Berdasarkan Abjad
-                        </option>
-                      </select>
-                      {sortOption === "newest" && (
-                        <ArrowDownIcon className="inline w-8 h-4 ml-2" />
-                      )}
-                      {sortOption === "oldest" && (
-                        <ArrowUpIcon className="inline w-8 h-4 ml-2" />
-                      )}
-                      {sortOption === "alphabetical" && (
-                        <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
-                      )}
-                    </div>
-                  </div>
+                    {/* Dropdown Sorting */}
+            <div className="relative inline-block">
+              {/* Wrapper div for the dropdown */}
+              <div
+                className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px]cursor-pointer"
+                onClick={handleDropdownToggle} // This will toggle dropdown on click
+              >
+                <span>
+                  {
+                    sortOptions.find((option) => option.value === sortOption)
+                      ?.label
+                  }
+                </span>
+                {sortOption === "newest" && (
+                  <ArrowDownIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "oldest" && (
+                  <ArrowUpIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "alphabetical" && (
+                  <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
+                )}
+              </div>
 
+              {/* Dropdown content */}
+              {isDropdownOpen && (
+                <div className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg">
+                  <ul>
+                    {sortOptions.map((option) => (
+                      <li
+                        key={option.value}
+                        onClick={() => handleSortChange(option.value)}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
+                        {option.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
                   <Link to="/hasildaftarmagang">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                       Lihat Selengkapnya
                     </button>
                   </Link>
@@ -310,7 +323,7 @@ const DashboardAdmin = () => {
                 <table className="min-w-full bg-white">
                   <thead>
                     <tr>
-                      <th className="py-2 pb-4 border-b w-[25%] text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
                         Nama
                       </th>
                       <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
@@ -322,7 +335,7 @@ const DashboardAdmin = () => {
                       <th className="py-2 pb-4 border-b w-[10%] text-sm font-semibold text-gray-600">
                         Status
                       </th>
-                      <th className="py-2 pb-4 border-b w-[25%] text-sm font-semibold text-gray-600">
+                      <th className="py-2 pb-4 border-b w-[20%] text-sm font-semibold text-gray-600">
                         Aksi
                       </th>
                     </tr>
@@ -347,7 +360,7 @@ const DashboardAdmin = () => {
                           </td>
                           <td className="py-2 px-4 border-b flex flex-row">
                             <button
-                              className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded hover:bg-green-600"
+                              className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded-lg hover:bg-green-600"
                               onClick={() =>
                                 handleUpdateStatus(
                                   peserta.user_id,
@@ -359,7 +372,7 @@ const DashboardAdmin = () => {
                               Terima
                             </button>
                             <button
-                              className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded hover:bg-red-600"
+                              className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600"
                               onClick={() =>
                                 handleUpdateStatus(
                                   peserta.user_id,
@@ -394,7 +407,7 @@ const DashboardAdmin = () => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Sebelumnya
           </button>
@@ -404,7 +417,7 @@ const DashboardAdmin = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Selanjutnya
           </button>

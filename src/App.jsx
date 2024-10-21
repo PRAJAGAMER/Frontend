@@ -23,6 +23,7 @@ import LoginAdmin from "./Pages_Admin/loginAdmin";
 import DataPengguna from "./Pages_Admin/DataPengguna";
 import EditProfilAdmin from "./Pages_Admin/EditProfilAdmin";
 import SyaratKetentuan from "./Pages/syaratKetentuan";
+import OpsiLogin from "./Pages/OpsiLogin";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -33,6 +34,10 @@ export default function App() {
     {
       path: "login",
       element: <Login />,
+    },
+    {
+      path: "loginopsi",
+      element: <OpsiLogin />,
     },
     {
       path: "register",

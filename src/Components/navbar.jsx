@@ -131,15 +131,15 @@ const Navbar = () => {
 
               {!token ? (
                 <button
-                  className="block w-full px-8 py-2 mt-4 bg-[#D24545] text-xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
-                  onClick={() => navigate("/login")}
+                  className="block w-full px-8 py-2 mt-4 bg-red-500 text-xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
+                  onClick={() => navigate("/loginopsi")}
                 >
                   Masuk
                 </button>
               ) : (
                 <div className="mt-auto">
                   <button
-                    className="block w-full px-8 py-2 mt-4 bg-[#D24545] text-xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
+                    className="block w-full px-8 py-2 mt-4 bg-red-500 text-xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
                     onClick={() => setIsModalOpen(true)} // Menampilkan modal saat logout diklik
                   >
                     Logout
@@ -147,7 +147,7 @@ const Navbar = () => {
 
                   {isModalOpen && (
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                      <div className="bg-white p-6 rounded-md shadow-md w-80">
+                      <div className="bg-white p-6 rounded-lg shadow-md w-80">
                         <h3 className="text-lg font-bold mb-4">
                           Konfirmasi Logout
                         </h3>
@@ -242,8 +242,8 @@ const Navbar = () => {
         {/* Login or User Dropdown for Desktop */}
         {!token ? (
           <button
-            className="hidden lg:block px-8 py-2 bg-[#D24545] text-2xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
-            onClick={() => navigate("/login")}
+            className="hidden lg:block px-8 py-2 bg-red-500 text-2xl rounded-lg text-white font-bold hover:bg-[#b83636] hover:shadow-lg transform hover:scale-105 transition duration-300"
+            onClick={() => navigate("/loginopsi")}
           >
             Masuk
           </button>
@@ -279,7 +279,7 @@ const Navbar = () => {
             {/* Modal Konfirmasi */}
             {isModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-md shadow-md w-80">
+                <div className="bg-white p-6 rounded-lg shadow-md w-80">
                   <h3 className="text-lg font-bold mb-4">Konfirmasi Logout</h3>
                   <p>Apakah Anda yakin ingin keluar?</p>
                   <div className="flex justify-end mt-6">

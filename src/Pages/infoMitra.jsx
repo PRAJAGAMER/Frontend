@@ -63,8 +63,8 @@ function InfoMitra() {
           <button
             className={`py-2 md:py-5 w-full md:w-64 border-2 font-bold rounded-xl text-xl md:text-2xl transition-colors duration-300 ${
               activeComponent === "Profil"
-                ? "bg-[#D24545] text-white"
-                : "border-[#D24545] hover:bg-[#D24545] hover:text-white"
+                ? "bg-red-500 text-white"
+                : "border-[#D24545] hover:bg-red-500 hover:text-white"
             }`}
             onClick={() => setActiveComponent("Profil")}
           >
@@ -73,8 +73,8 @@ function InfoMitra() {
           <button
             className={`py-2 md:py-5 w-full md:w-64 border-2 font-bold rounded-xl text-xl md:text-2xl transition-colors duration-300 ${
               activeComponent === "Bidang"
-                ? "bg-[#D24545] text-white"
-                : "border-[#D24545] hover:bg-[#D24545] hover:text-white"
+                ? "bg-red-500 text-white"
+                : "border-[#D24545] hover:bg-red-500 hover:text-white"
             }`}
             onClick={() => setActiveComponent("Bidang")}
           >
@@ -83,8 +83,8 @@ function InfoMitra() {
           <button
             className={`py-2 md:py-5 w-full md:w-64 border-2 font-bold rounded-xl text-xl md:text-2xl transition-colors duration-300 ${
               activeComponent === "Pelayanan TPDK"
-                ? "bg-[#D24545] text-white"
-                : "border-[#D24545] hover:bg-[#D24545] hover:text-white"
+                ? "bg-red-500 text-white"
+                : "border-[#D24545] hover:bg-red-500 hover:text-white"
             }`}
             onClick={() => setActiveComponent("Pelayanan TPDK")}
           >

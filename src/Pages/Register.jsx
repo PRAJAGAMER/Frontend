@@ -34,6 +34,64 @@ const Register = () => {
     });
   };
 
+  const handleNama = (e) => {
+    setFormData({ ...formData, namaLengkap: e.target.value });
+    setErrors({ ...errors, namaLengkap: "" });
+  };
+
+  const handleNIK = (e) => {
+    setFormData({ ...formData, nik: e.target.value });
+    setErrors({ ...errors, nik: "" });
+  };
+
+  const handleNoTelp = (e) => {
+    setFormData({ ...formData, noTelp: e.target.value });
+    setErrors({ ...errors, noTelp: "" });
+  };
+
+  const handleEmail = (e) => {
+    setFormData({ ...formData, email: e.target.value });
+    setErrors({ ...errors, email: "" });
+  };
+
+  const handlePasswordChange = (e) => {
+    setFormData({ ...formData, password: e.target.value });
+    setErrors({ ...errors, password: "" });
+  };
+
+  const handleNIM = (e) => {
+    setFormData({ ...formData, nim: e.target.value });
+    setErrors({ ...errors, nim: "" });
+  };
+
+  const handleUniv = (e) => {
+    setFormData({ ...formData, asalUniversitas: e.target.value });
+    setErrors({ ...errors, asalUniversitas: "" });
+  };
+
+  const handleJurusan = (e) => {
+    setFormData({ ...formData, jurusan: e.target.value });
+    setErrors({ ...errors, jurusan: "" });
+  };
+
+  const handleFileFoto = (e) => {
+    const file = e.target.files[0]; // Mengambil file pertama yang diunggah
+    setFormData({ ...formData, photo: file }); // Simpan file pada state
+    setErrors({ ...errors, photo: "" });
+  };
+
+  const handleFileCV = (e) => {
+    const file = e.target.files[0]; // Mengambil file pertama yang diunggah
+    setFormData({ ...formData, cv: file }); // Simpan file pada state
+    setErrors({ ...errors, cv: "" });
+  };
+
+  const handleFileTranskipNilai = (e) => {
+    const file = e.target.files[0]; // Mengambil file pertama yang diunggah
+    setFormData({ ...formData, score_list: file }); // Simpan file pada state
+    setErrors({ ...errors, score_list: "" });
+  };
+
   // Handle file uploads
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -114,16 +172,39 @@ const Register = () => {
     // Validasi Foto
     if (!photo) {
       errors.photo = "Foto harus diunggah.";
+    } else {
+      // Validasi ukuran maksimal 5MB
+      const allowedPhotoTypes = ["image/jpeg", "image/png", "image/jpg"];
+      if (photo.size > 5 * 1024 * 1024) {
+        errors.photo = "Ukuran file foto tidak boleh lebih dari 5 MB.";
+      } else if (!allowedPhotoTypes.includes(photo.type)) {
+        errors.photo = "Format foto harus jpg, jpeg, atau png.";
+      }
     }
 
     // Validasi CV
     if (!cv) {
       errors.cv = "CV harus diunggah.";
+    } else {
+      // Validasi ukuran maksimal 5MB
+      if (cv.size > 5 * 1024 * 1024) {
+        errors.cv = "Ukuran file CV tidak boleh lebih dari 5 MB.";
+      } else if (cv.type !== "application/pdf") {
+        errors.cv = "Format CV harus berupa PDF.";
+      }
     }
 
     // Validasi Transkip Nilai
     if (!score_list) {
       errors.score_list = "Transkip Nilai harus diunggah.";
+    } else {
+      // Validasi ukuran maksimal 5MB
+      if (score_list.size > 5 * 1024 * 1024) {
+        errors.score_list =
+          "Ukuran file Transkip Nilai tidak boleh lebih dari 5 MB.";
+      } else if (score_list.type !== "application/pdf") {
+        errors.score_list = "Format Transkip Nilai harus berupa PDF.";
+      }
     }
 
     setErrors(errors);
@@ -146,7 +227,8 @@ const Register = () => {
     formDataToSend.append("photo", formData.photo);
     formDataToSend.append("cv", formData.cv);
     formDataToSend.append("score_list", formData.score_list);
-    console.log("response1", formDataToSend);
+
+    console.log("FormData ready to send:", formDataToSend); // Debugging
 
     if (validate()) {
       try {
@@ -159,9 +241,9 @@ const Register = () => {
             },
           }
         );
+        console.log("response", response); // Debugging: lihat response dari server
 
         if (response.status === 201) {
-          console.log("response", response);
           toast.success("Berhasil Registrasi", {
             position: "top-right",
             autoClose: 2000,
@@ -172,10 +254,10 @@ const Register = () => {
             progress: undefined,
             theme: "colored",
           });
-          navigate("/login");
+          navigate("/loginopsi");
         }
       } catch (error) {
-        console.error("Error during registration:", error);
+        console.error("Error during registration:", error.response); // Debugging: lihat error yang terjadi
         toast.error("Registrasi gagal. Silakan coba lagi!", {
           position: "top-right",
           autoClose: 2000,
@@ -241,7 +323,8 @@ const Register = () => {
                     id="nik"
                     name="nik"
                     value={formData.nik}
-                    onChange={handleChange}
+                    onChange={handleNIK}
+                    maxLength={16}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
                       ${errors.nik ? "border-red-500" : "border-gray-300"}`}
                     placeholder="NIK"
@@ -268,7 +351,7 @@ const Register = () => {
                     id="namaLengkap"
                     name="namaLengkap"
                     value={formData.namaLengkap}
-                    onChange={handleChange}
+                    onChange={handleNama}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
                       ${
                         errors.namaLengkap
@@ -299,7 +382,7 @@ const Register = () => {
                     id="nim"
                     name="nim"
                     value={formData.nim}
-                    onChange={handleChange}
+                    onChange={handleNIM}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
                       ${errors.nim ? "border-red-500" : "border-gray-300"}`}
                     placeholder="NIM"
@@ -327,7 +410,7 @@ const Register = () => {
                       id="password"
                       name="password"
                       value={formData.password}
-                      onChange={handleChange}
+                      onChange={handlePasswordChange}
                       className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] pr-12
                         ${
                           errors.password ? "border-red-500" : "border-gray-300"
@@ -371,7 +454,7 @@ const Register = () => {
                     id="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
+                    onChange={handleEmail}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545] "
                       placeholder="Email ${
                         errors.email ? "border-red-500" : "border-gray-300"
@@ -400,7 +483,7 @@ const Register = () => {
                     id="noTelp"
                     name="noTelp"
                     value={formData.noTelp}
-                    onChange={handleChange}
+                    onChange={handleNoTelp}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
                       ${errors.noTelp ? "border-red-500" : "border-gray-300"}`}
                     placeholder="No. Telp"
@@ -427,7 +510,7 @@ const Register = () => {
                     id="asalUniversitas"
                     name="asalUniversitas"
                     value={formData.asalUniversitas}
-                    onChange={handleChange}
+                    onChange={handleUniv}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
                       ${
                         errors.asalUniversitas
@@ -458,7 +541,7 @@ const Register = () => {
                     id="jurusan"
                     name="jurusan"
                     value={formData.jurusan}
-                    onChange={handleChange}
+                    onChange={handleJurusan}
                     className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D24545]
                       ${errors.jurusan ? "border-red-500" : "border-gray-300"}`}
                     placeholder="Jurusan"
@@ -486,7 +569,7 @@ const Register = () => {
                       type="file"
                       className="hidden"
                       name="photo"
-                      onChange={handleFileChange}
+                      onChange={handleFileFoto}
                     />
                   </label>
                   <span className="bg-white text-gray-500 py-2 px-4 border border-l-0 rounded-r flex-1">
@@ -513,7 +596,7 @@ const Register = () => {
                       type="file"
                       className="hidden"
                       name="cv"
-                      onChange={handleFileChange}
+                      onChange={handleFileCV}
                     />
                   </label>
                   <span className="bg-white text-gray-500 py-2 px-4 border border-l-0 rounded-r flex-1">
@@ -540,7 +623,7 @@ const Register = () => {
                       type="file"
                       className="hidden"
                       name="score_list"
-                      onChange={handleFileChange}
+                      onChange={handleFileTranskipNilai}
                     />
                   </label>
                   <span className="bg-white text-gray-500 py-2 px-4 border border-l-0 rounded-r flex-1">
@@ -562,7 +645,7 @@ const Register = () => {
 
             <button
               type="submit"
-              className="py-3 px-10 bg-[#D24545] text-white font-semibold rounded-lg"
+              className="py-3 px-10 bg-red-500 text-white font-semibold rounded-lg"
             >
               Simpan
             </button>
@@ -573,7 +656,7 @@ const Register = () => {
                 Sudah punya akun?{" "}
                 <button
                   className="text-[#D24545] hover:underline"
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate("/loginopsi")}
                 >
                   Login
                 </button>

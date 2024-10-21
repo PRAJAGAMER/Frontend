@@ -17,13 +17,15 @@ function AkunAdmin() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
   const [error, setError] = useState(null); // State for error handling
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Function to check if user is logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
-      window.location.href = "/loginadmin"; // Redirect to login page if no token
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
     } else {
       fetchAdminData();
     }
@@ -33,6 +35,7 @@ function AkunAdmin() {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Anda belum login. Silakan login terlebih dahulu.");
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
       window.location.href = "/loginadmin";
       return;
     }
@@ -45,7 +48,13 @@ function AkunAdmin() {
       });
 
       if (!response.ok) {
-        throw new Error("Gagal mengambil data admin");
+        if (response.status === 401) {
+          setError("Akses tidak diizinkan. Silakan login ulang.");
+          localStorage.removeItem("token"); // Hapus token jika tidak valid
+          window.location.href = "/loginadmin"; // Redirect ke halaman login
+        } else {
+          throw new Error("Gagal mengambil data admin");
+        }
       }
 
       const data = await response.json();
@@ -111,15 +120,16 @@ function AkunAdmin() {
     setSearchQuery(e.target.value);
   };
 
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
 
   const sortData = (data) => {
     if (sortOption === "newest") {
-      return [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return [...data].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
     } else if (sortOption === "oldest") {
-      return [...data].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      return [...data].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
     } else if (sortOption === "alphabetical") {
       return [...data].sort((a, b) => a.admin_name.localeCompare(b.admin_name));
     }
@@ -141,27 +151,54 @@ function AkunAdmin() {
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+// Menggabungkan fungsi handleSortChange dan handleDropdownToggle
+const handleDropdownToggle = () => {
+  setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown open/close
+};
 
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(parseInt(e.target.value, 10));
-    setCurrentPage(1); // Reset to the first page when items per page changes
-  };
+// Memperbarui handleSortChange agar menerima event dari dropdown dan close dropdown setelah perubahan
+const handleSortChange = (e) => {
+  const selectedOption = e.target ? e.target.value : e; // Check if event or direct option is passed
+  setSortOption(selectedOption); // Update the sorting option
+  setIsDropdownOpen(false); // Close the dropdown after selecting
+};
+
+// Opsi urutan sort
+const sortOptions = [
+{ value: "newest", label: "Data Terbaru" },
+{ value: "oldest", label: "Data Terlama" },
+{ value: "alphabetical", label: "Berdasarkan Abjad" },
+];
+
+// Mengubah jumlah item per halaman dan reset halaman ke 1
+const handleItemsPerPageChange = (e) => {
+setItemsPerPage(parseInt(e.target.value, 10)); // Mengubah jumlah item per halaman
+setCurrentPage(1); // Reset halaman ke 1 saat jumlah item per halaman berubah
+};
+
+// Mengelola perubahan halaman dengan validasi batas halaman
+const handlePageChange = (newPage) => {
+if (newPage >= 1 && newPage <= totalPages) {
+  setCurrentPage(newPage); // Update halaman jika dalam rentang yang valid
+}
+};
+
+
 
   return (
     <div className="min-h-screen bg-gray-100">
       <HeaderAdmin className="relative z-20" />
 
       <div className="flex-1 flex flex-col ml-64 pt-16 p-6 mt-10 bg-gray-100">
-      <h3 className="text-3xl font-bold mb-5">Akun Admin</h3>
+        <h3 className="text-3xl font-bold mb-5">Akun Admin</h3>
         <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2 font-semibold text-md">
+          <div className="flex items-center space-x-2 font-semibold text-md">
             <span>Jumlah setiap halaman</span>
-            <select value={itemsPerPage} onChange={handleItemsPerPageChange} className="border rounded p-1">
+            <select
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+              className="border rounded-lg p-1"
+            >
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={15}>15</option>
@@ -180,52 +217,71 @@ function AkunAdmin() {
               <MagnifyingGlassIcon className="absolute left-2 top-2 w-6 h-6 text-gray-400" />
             </div>
 
-            <div className="relative inline-block">
-              <div className="flex items-center border rounded-md p-2 bg-yellow-500 text-white font-semibold w-[191px] pl-3">
-                <select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  style={{
-                    color: "white",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                    outline: "none",
-                    border: "none",
-                    width: "100%",
-                  }}
-                  className="flex-grow appearance-none focus:outline-none font-semibold"
-                >
-                  <option value="newest" style={{ backgroundColor: "white", color: "black" }}>
-                    Data Terbaru
-                  </option>
-                  <option value="oldest" style={{ backgroundColor: "white", color: "black" }}>
-                    Data Terlama
-                  </option>
-                  <option value="alphabetical" style={{ backgroundColor: "white", color: "black" }}>
-                    Berdasarkan Abjad
-                  </option>
-                </select>
-                {sortOption === "newest" && <ArrowDownIcon className="inline w-8 h-4 ml-2" />}
-                {sortOption === "oldest" && <ArrowUpIcon className="inline w-8 h-4 ml-2" />}
-                {sortOption === "alphabetical" && <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />}
+           {/* Dropdown Sorting */}
+           <div className="relative inline-block">
+              {/* Wrapper div for the dropdown */}
+              <div
+                className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px]cursor-pointer"
+                onClick={handleDropdownToggle} // This will toggle dropdown on click
+              >
+                <span>
+                  {
+                    sortOptions.find((option) => option.value === sortOption)
+                      ?.label
+                  }
+                </span>
+                {sortOption === "newest" && (
+                  <ArrowDownIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "oldest" && (
+                  <ArrowUpIcon className="inline w-8 h-4 ml-2" />
+                )}
+                {sortOption === "alphabetical" && (
+                  <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
+                )}
               </div>
+
+              {/* Dropdown content */}
+              {isDropdownOpen && (
+                <div className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg">
+                  <ul>
+                    {sortOptions.map((option) => (
+                      <li
+                        key={option.value}
+                        onClick={() => handleSortChange(option.value)}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                      >
+                        {option.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <button
-              className="px-4 py-2 rounded-md bg-[#D24545] text-white font-semibold flex justify-center items-center gap-2"
+              className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold flex justify-center items-center gap-2"
               onClick={handleOpenModal}
             >
               <PlusCircleIcon className="h-5 w-5" />
               Tambah Admin
             </button>
 
-            <ModalTambahAdmin isOpen={isModalOpen} onClose={handleCloseModal} onAddAdmin={handleAddAdmin} />
+            <ModalTambahAdmin
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onAddAdmin={handleAddAdmin}
+            />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-md shadow overflow-x-auto">
-          <div className="w-full mx-auto"> {/* Set the fixed-width container */}
-            <table className="min-w-full bg-white table-fixed"> {/* Added table-fixed class for equal-width columns */}
+        <div className="bg-white p-4 rounded-lg shadow overflow-x-auto">
+          <div className="w-full mx-auto">
+            {" "}
+            {/* Set the fixed-width container */}
+            <table className="min-w-full bg-white table-fixed">
+              {" "}
+              {/* Added table-fixed class for equal-width columns */}
               <thead>
                 <tr>
                   <th className="py-2 pb-4 border-b w-1/5">Nama</th>
@@ -235,7 +291,6 @@ function AkunAdmin() {
                   <th className="py-2 pb-4 border-b w-1/5">Aksi</th>
                 </tr>
               </thead>
-
               <tbody>
                 {currentItems.length > 0 ? (
                   currentItems.map((admin) => (
@@ -247,7 +302,7 @@ function AkunAdmin() {
                       <td className="py-2 border-b flex items-center justify-center">
                         <button
                           onClick={() => handleDelete(admin.id)}
-                          className="ml-2 px-4 py-2 w-50 bg-red-500 text-white rounded-md hover:bg-red-600 flex justify-center items-center"
+                          className="ml-2 px-4 py-2 w-50 bg-red-500 text-white rounded-lg hover:bg-red-600 flex justify-center items-center"
                         >
                           Hapus Akun
                         </button>
@@ -256,7 +311,9 @@ function AkunAdmin() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-4">Tidak ada data admin</td>
+                    <td colSpan="5" className="text-center py-4">
+                      Tidak ada data admin
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -268,7 +325,7 @@ function AkunAdmin() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Sebelumnya
           </button>
@@ -278,13 +335,13 @@ function AkunAdmin() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 disabled:opacity-50"
           >
             Selanjutnya
           </button>
         </div>
-        </div>
       </div>
+    </div>
   );
 }
 

@@ -57,7 +57,7 @@ const HeaderAdmin = () => {
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-md">
+          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg">
            <button
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
                     onClick={() => setIsModalOpen(true)} // Menampilkan modal saat logout diklik
@@ -67,7 +67,7 @@ const HeaderAdmin = () => {
 
                   {isModalOpen && (
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                      <div className="bg-white p-6 rounded-md shadow-md w-80">
+                      <div className="bg-white p-6 rounded-lg shadow-md w-80">
                         <h3 className="text-lg font-bold mb-4">
                           Konfirmasi Logout
                         </h3>

@@ -14,20 +14,6 @@ export const login = (data, navigate) => async (dispatch, getState) => {
     if (response.status === 200) {
       const user = response.data.user;
 
-      // Cek status akun
-      if (user.status === "Pending") {
-        toast.error("Akun anda belum terverifikasi, silahkan hubungi admin.", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-        return; // Jangan lanjutkan login jika status akun "Pending"
-      }
 
       // Jika status akun aktif, lanjutkan proses login
       dispatch(setToken(response.data.token));
@@ -96,6 +82,7 @@ export const login = (data, navigate) => async (dispatch, getState) => {
     }
   }
 };
+
 export const register = (data, navigate) => async (dispatch, getState) => {
   console.log("Isi data:", data);
 
@@ -115,7 +102,7 @@ export const register = (data, navigate) => async (dispatch, getState) => {
     if (response.status === 201) {
       console.log("Register Berhasil:", response);
       alert("Registrasi berhasil!");
-      navigate("/login");
+      navigate("/loginopsi");
     }
   } catch (error) {
     // Penanganan kesalahan saat melakukan permintaan
