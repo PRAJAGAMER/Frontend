@@ -20,25 +20,25 @@ const DataPengguna = () => {
   const [error, setError] = useState(null); // State for error handling
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-// Function to check if user is logged in and fetch data
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setError("Anda belum login. Silakan login terlebih dahulu.");
-    localStorage.removeItem("token"); // Hapus token jika tidak ada
-    window.location.href = "/loginadmin"; // Redirect ke halaman login
-  } else {
-    fetchData(token);
-  }
-}, []); // This only runs once, on component mount
+  // Function to check if user is logged in and fetch data
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
+    } else {
+      fetchData(token);
+    }
+  }, []); // This only runs once, on component mount
 
-// Fetch data again if status or pesertaData changes
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    fetchData(token);
-  }
-}, [pesertaData, sortOption]);
+  // Fetch data again if status or pesertaData changes
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchData(token);
+    }
+  }, [pesertaData, sortOption]);
 
   const fetchData = async (token) => {
     try {
@@ -171,10 +171,12 @@ useEffect(() => {
       ? `62${phoneNumber.slice(1)}`
       : `62${phoneNumber}`;
 
-    const whatsappURL = `https://api.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodeURIComponent(
+    // Buat URL WhatsApp API dengan pesan yang sudah di-encode
+    const whatsappURL = `https://wa.me/${formattedPhoneNumber}?text=${encodeURIComponent(
       message
     )}`;
 
+    // Membuka URL WhatsApp
     window.open(whatsappURL, "_blank");
   };
 
@@ -204,7 +206,6 @@ useEffect(() => {
     const notelp = pesertaData[index]?.Profile?.telp_user; // Cek apakah 'notelp' valid
     sendWhatsAppMessage(notelp, status);
   };
-  
 
   return (
     <div className="flex flex-col h-screen">
@@ -352,41 +353,58 @@ useEffect(() => {
                     </td>
                     <td className="py-2 px-4 border-b">
                       <span
-                          className={`${
-                            peserta.status === "Verifying"
-                              ? "text-green-500"
-                              : peserta.status === "NotVerifying"
-                              ? "text-red-500"
-                              : peserta.status === "Pending"
-                              ? "text-black"
-                              : ""
-                          }`}
-                        >
+                        className={`${
+                          peserta.status === "Verifying"
+                            ? "text-green-500"
+                            : peserta.status === "NotVerifying"
+                            ? "text-red-500"
+                            : peserta.status === "Pending"
+                            ? "text-black"
+                            : ""
+                        }`}
+                      >
                         {peserta.status}
                       </span>
                     </td>
                     <td className="py-2 px-4 border-b">
                       <div className="flex space-x-2">
-                        <button
-                          onClick={() =>
-                            handleUpdateStatus(peserta.id, "Verifying", index)
-                          }
-                          className="px-3 py-1 bg-green-500 text-white rounded"
-                        >
-                          Terima
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleUpdateStatus(
-                              peserta.id,
-                              "NotVerifying",
-                              index
-                            )
-                          }
-                          className="px-3 py-1 bg-red-500 text-white rounded"
-                        >
-                          Tolak
-                        </button>
+                        {/* Tampilkan tombol "Terima" hanya jika statusnya bukan "NotVerifying" */}
+                        {peserta.status !== "NotVerifying" && (
+                          <button
+                            onClick={() =>
+                              handleUpdateStatus(peserta.id, "Verifying", index)
+                            }
+                            className={`px-3 py-1 text-white rounded ${
+                              peserta.status === "Verifying"
+                                ? "bg-gray-400 cursor-not-allowed" // Jika status Verifying, tombol Terima disabled
+                                : "bg-green-500" // Tombol aktif jika status bukan Verifying
+                            }`}
+                            disabled={peserta.status === "Verifying"} // Disabled jika status Verifying
+                          >
+                            Terima
+                          </button>
+                        )}
+
+                        {/* Tampilkan tombol "Tolak" hanya jika statusnya bukan "Verifying" */}
+                        {peserta.status !== "Verifying" && (
+                          <button
+                            onClick={() =>
+                              handleUpdateStatus(
+                                peserta.id,
+                                "NotVerifying",
+                                index
+                              )
+                            }
+                            className={`px-3 py-1 text-white rounded ${
+                              peserta.status === "NotVerifying"
+                                ? "bg-gray-400 cursor-not-allowed" // Jika status NotVerifying, tombol Tolak disabled
+                                : "bg-red-500" // Tombol aktif jika status bukan NotVerifying
+                            }`}
+                            disabled={peserta.status === "NotVerifying"} // Disabled jika status NotVerifying
+                          >
+                            Tolak
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
