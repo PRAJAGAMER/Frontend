@@ -20,7 +20,7 @@ function DataPelamar() {
   const [error, setError] = useState(null); // State untuk error handling
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Function to check if user is logged in
+  // Function to check if user is logged in and fetch data
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -30,7 +30,15 @@ function DataPelamar() {
     } else {
       fetchPesertaData(token);
     }
-  }, []);
+  }, []); // This only runs once, on component mount
+
+  // Fetch data again if status or pesertaData changes
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchPesertaData(token);
+    }
+  }, [pesertaData, sortOption]);
 
   const fetchPesertaData = async (token) => {
     try {
@@ -177,21 +185,24 @@ function DataPelamar() {
       message = `Maaf, lamaran magang Anda tidak dapat kami terima. Terima kasih telah mendaftar dan tetap semangat!`;
     }
 
+    // Format nomor telepon dengan kode negara Indonesia
     const formattedPhoneNumber = phoneNumber.startsWith("0")
       ? `62${phoneNumber.slice(1)}`
       : `62${phoneNumber}`;
 
-    const whatsappURL = `https://api.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodeURIComponent(
+    // Buat URL WhatsApp API dengan pesan yang sudah di-encode
+    const whatsappURL = `https://wa.me/${formattedPhoneNumber}?text=${encodeURIComponent(
       message
     )}`;
 
+    // Buka URL di tab baru
     window.open(whatsappURL, "_blank");
   };
 
   const handleUpdateStatus = async (id, status, index) => {
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-
+    console.log("DATA PPENGGUNA", data);
     if (!token) {
       window.location.href = "/loginadmin";
       return;
@@ -204,18 +215,14 @@ function DataPelamar() {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // Fetch updated data
+      fetchPesertaData(token);
     } catch (error) {
       console.error("Error updating status:", error);
     }
-
-    const response = await axios.get("http://localhost:5000/api/users2", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const notelp = response.data[index].Profile.telp_user;
+    console.log(pesertaData); // Cek struktur data
+    const notelp = pesertaData[index]?.Profile?.telp_user; // Cek apakah 'notelp' valid
     sendWhatsAppMessage(notelp, status);
   };
 
@@ -304,6 +311,8 @@ function DataPelamar() {
             </button>
           </div>
         </div>
+
+        {/* Data Table */}
         <div className="bg-white p-4 rounded-lg shadow">
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
@@ -331,7 +340,7 @@ function DataPelamar() {
               </thead>
               <tbody>
                 {currentData.map((peserta, index) => (
-                  <tr key={index}>
+                  <tr key={peserta.id}>
                     <td className="py-2 px-4 border-b">{peserta.name}</td>
                     <td className="py-2 px-4 border-b">
                       {peserta.University.nim || "Kosong"}
@@ -413,24 +422,61 @@ function DataPelamar() {
                     <td className="py-2 px-4 border-b">
                       {formatDate(peserta.Regist.updateAt)}
                     </td>
-                    <td className="py-2 px-4 border-b">{peserta.status}</td>
-                    <td className="py-2 px-4 border-b flex flex-row w-72">
-                      <button
-                        className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded-lg hover:bg-green-600 hover:underline"
-                        onClick={() =>
-                          handleUpdateStatus(peserta.user_id, "Accepted", index)
-                        }
+                    <td className="py-2 px-4 border-b">
+                      <span
+                        className={`${
+                          peserta.status === "Accepted"
+                            ? "text-green-500"
+                            : peserta.status === "Rejected"
+                            ? "text-red-500"
+                            : peserta.status === "Verifying"
+                            ? "text-black"
+                            : ""
+                        }`}
                       >
-                        Terima
-                      </button>
-                      <button
-                        className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600 hover:underline"
-                        onClick={() =>
-                          handleUpdateStatus(peserta.user_id, "Rejected", index)
-                        }
-                      >
-                        Tolak
-                      </button>
+                        {peserta.status}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                    <div className="flex space-x-2">
+                        {/* Tampilkan tombol "Terima" hanya jika statusnya bukan "Accepted" */}
+                        {peserta.status !== "Rejected" && (
+                          <button
+                            onClick={() =>
+                              handleUpdateStatus(peserta.id, "Accepted", index)
+                            }
+                            className={`px-3 py-1 text-white rounded ${
+                              peserta.status === "Accepted"
+                                ? "bg-gray-400 cursor-not-allowed" // Jika status Accepted, tombol Terima disabled
+                                : "bg-green-500" // Tombol aktif jika status bukan Accepted
+                            }`}
+                            disabled={peserta.status === "Accepted"} // Disabled jika status Accepted
+                          >
+                            Terima
+                          </button>
+                        )}
+
+                        {/* Tampilkan tombol "Tolak" hanya jika statusnya bukan "Accepted" */}
+                        {peserta.status !== "Accepted" && (
+                          <button
+                            onClick={() =>
+                              handleUpdateStatus(
+                                peserta.id,
+                                "Rejected",
+                                index
+                              )
+                            }
+                            className={`px-3 py-1 text-white rounded ${
+                              peserta.status === "Rejected"
+                                ? "bg-gray-400 cursor-not-allowed" // Jika status Rejected, tombol Tolak disabled
+                                : "bg-red-500" // Tombol aktif jika status bukan Rejected
+                            }`}
+                            disabled={peserta.status === "Rejected"} // Disabled jika status Rejected
+                          >
+                            Tolak
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

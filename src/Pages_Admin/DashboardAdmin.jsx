@@ -30,45 +30,105 @@ const DashboardAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1); // State untuk halaman saat ini
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  
+
+  // Function to check if user is logged in and fetch data
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setError("Anda belum login. Silakan login terlebih dahulu.");
+    localStorage.removeItem("token"); // Hapus token jika tidak ada
+    window.location.href = "/loginadmin"; // Redirect ke halaman login
+  } else {
+    fetchDataTabel(token);
+  }
+}, []); // This only runs once, on component mount
+
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Anda belum login. Silakan login terlebih dahulu.");
-        window.location.href = "/loginadmin";
-        return;
-      }
+    
 
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/admin/dashboard",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchDataTabel(token);
+    }
+  }, [applicantsData, sortOption]);
 
-        setApplicantsData(response.data.applicantsList || []);
-        setTotalApplicants(response.data.totalApplicants || 0);
-        setVerifyingApplicants(response.data.verifyingApplicants || 0);
-        setAcceptedApplicants(response.data.acceptedApplicants || 0);
-        setRejectedApplicants(response.data.rejectedApplicants || 0);
-      } catch (error) {
-        console.error("Error fetching applicants data:", error);
+  const fetchData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin";
+      return;
+    }
 
-        if (error.response && error.response.status === 401) {
-          setError("Akses tidak diizinkan. Silakan login ulang.");
-          localStorage.removeItem("token");
-          window.location.href = "/loginadmin";
-        } else {
-          setError("Data tidak dapat diambil");
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/admin/dashboard",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }
-    };
+        
+      );
 
-    fetchData();
-  }, []);
+      // console.log("dashboard", response)
+      setApplicantsData(response?.data?.applicantsList || []);
+      setTotalApplicants(response?.data?.totalApplicants || 0);
+      setVerifyingApplicants(response?.data?.verifyingApplicants || 0);
+      setAcceptedApplicants(response?.data?.acceptedApplicants || 0);
+      setRejectedApplicants(response?.data?.rejectedApplicants || 0);
+    } catch (error) {
+      console.error("Error fetching applicants data:", error);
+
+      if (error.response && error.response.status === 401) {
+        setError("Akses tidak diizinkan. Silakan login ulang.");
+        localStorage.removeItem("token");
+        window.location.href = "/loginadmin";
+      } else {
+        setError("Data tidak dapat diambil");
+      }
+    }
+  };
+
+
+  const fetchDataTabel = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      window.location.href = "/loginadmin";
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/admin/dashboard",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        
+      );
+
+      
+      setApplicantsData(response?.data?.applicantsList || []);
+      setTotalApplicants(response?.data?.totalApplicants || 0);
+      setVerifyingApplicants(response?.data?.verifyingApplicants || 0);
+      setAcceptedApplicants(response?.data?.acceptedApplicants || 0);
+      setRejectedApplicants(response?.data?.rejectedApplicants || 0);
+    } catch (error) {
+      console.error("Error fetching applicants data:", error);
+
+      if (error.response && error.response.status === 401) {
+        setError("Akses tidak diizinkan. Silakan login ulang.");
+        localStorage.removeItem("token");
+        window.location.href = "/loginadmin";
+      } else {
+        setError("Data tidak dapat diambil");
+      }
+    }
+  };
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -87,26 +147,25 @@ const DashboardAdmin = () => {
     setIsDropdownOpen(false); // Close the dropdown after selecting
   };
 
- // Opsi urutan sort
-const sortOptions = [
-  { value: "newest", label: "Data Terbaru" },
-  { value: "oldest", label: "Data Terlama" },
-  { value: "alphabetical", label: "Berdasarkan Abjad" },
-];
+  // Opsi urutan sort
+  const sortOptions = [
+    { value: "newest", label: "Data Terbaru" },
+    { value: "oldest", label: "Data Terlama" },
+    { value: "alphabetical", label: "Berdasarkan Abjad" },
+  ];
 
-// Mengubah jumlah item per halaman dan reset halaman ke 1
-const handleItemsPerPageChange = (e) => {
-  setItemsPerPage(parseInt(e.target.value, 10)); // Mengubah jumlah item per halaman
-  setCurrentPage(1); // Reset halaman ke 1 saat jumlah item per halaman berubah
-};
+  // Mengubah jumlah item per halaman dan reset halaman ke 1
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(parseInt(e.target.value, 10)); // Mengubah jumlah item per halaman
+    setCurrentPage(1); // Reset halaman ke 1 saat jumlah item per halaman berubah
+  };
 
-// Mengelola perubahan halaman dengan validasi batas halaman
-const handlePageChange = (newPage) => {
-  if (newPage >= 1 && newPage <= totalPages) {
-    setCurrentPage(newPage); // Update halaman jika dalam rentang yang valid
-  }
-};
-
+  // Mengelola perubahan halaman dengan validasi batas halaman
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage); // Update halaman jika dalam rentang yang valid
+    }
+  };
 
   // Filter data berdasarkan query pencarian
   const filteredApplicants = applicantsData.filter(
@@ -167,9 +226,8 @@ const handlePageChange = (newPage) => {
   const handleUpdateStatus = async (id, status, index) => {
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-
+    console.log("DATA PPENGGUNA", data);
     if (!token) {
-      setError("Anda belum login. Silakan login terlebih dahulu.");
       window.location.href = "/loginadmin";
       return;
     }
@@ -181,18 +239,14 @@ const handlePageChange = (newPage) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // Fetch updated data
+      fetchDataTabel(token);
     } catch (error) {
       console.error("Error updating status:", error);
     }
-
-    const response = await axios.get("http://localhost:5000/api/users2", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const notelp = response.data[index].Profile.telp_user;
+    console.log(applicantsData); // Cek struktur data
+    const notelp = data?.applicantsData[index]?.telp_user; // Cek apakah 'notelp' valid
     sendWhatsAppMessage(notelp, status);
   };
 
@@ -237,7 +291,7 @@ const handlePageChange = (newPage) => {
             </div>
 
             <div className="mt-8 bg-white p-4 rounded-lg shadow relative">
-              <h3 className="text-3xl font-bold mb-5  border-b-2 pb-4 pt-2 mb-8">
+              <h3 className="text-3xl font-bold border-b-2 pb-4 pt-2 mb-8">
                 Data Pelamar
               </h3>
               <div className="flex justify-between items-center border-gray-300 pb-2 mb-4">
@@ -270,48 +324,49 @@ const handlePageChange = (newPage) => {
                     <MagnifyingGlassIcon className="absolute left-2 top-2 w-5 h-5 text-gray-400" />
                   </div>
 
-                    {/* Dropdown Sorting */}
-            <div className="relative inline-block">
-              {/* Wrapper div for the dropdown */}
-              <div
-                className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px]cursor-pointer"
-                onClick={handleDropdownToggle} // This will toggle dropdown on click
-              >
-                <span>
-                  {
-                    sortOptions.find((option) => option.value === sortOption)
-                      ?.label
-                  }
-                </span>
-                {sortOption === "newest" && (
-                  <ArrowDownIcon className="inline w-8 h-4 ml-2" />
-                )}
-                {sortOption === "oldest" && (
-                  <ArrowUpIcon className="inline w-8 h-4 ml-2" />
-                )}
-                {sortOption === "alphabetical" && (
-                  <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
-                )}
-              </div>
+                  {/* Dropdown Sorting */}
+                  <div className="relative inline-block">
+                    {/* Wrapper div for the dropdown */}
+                    <div
+                      className="flex items-center border rounded-lg p-2 bg-yellow-500 text-white font-semibold w-[191px]cursor-pointer"
+                      onClick={handleDropdownToggle} // This will toggle dropdown on click
+                    >
+                      <span>
+                        {
+                          sortOptions.find(
+                            (option) => option.value === sortOption
+                          )?.label
+                        }
+                      </span>
+                      {sortOption === "newest" && (
+                        <ArrowDownIcon className="inline w-8 h-4 ml-2" />
+                      )}
+                      {sortOption === "oldest" && (
+                        <ArrowUpIcon className="inline w-8 h-4 ml-2" />
+                      )}
+                      {sortOption === "alphabetical" && (
+                        <ArrowsRightLeftIcon className="inline w-8 h-4 ml-2" />
+                      )}
+                    </div>
 
-              {/* Dropdown content */}
-              {isDropdownOpen && (
-                <div className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg">
-                  <ul>
-                    {sortOptions.map((option) => (
-                      <li
-                        key={option.value}
-                        onClick={() => handleSortChange(option.value)}
-                        className="cursor-pointer p-2 hover:bg-gray-200"
-                      >
-                        {option.label}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-                  <Link to="/hasildaftarmagang">
+                    {/* Dropdown content */}
+                    {isDropdownOpen && (
+                      <div className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg">
+                        <ul>
+                          {sortOptions.map((option) => (
+                            <li
+                              key={option.value}
+                              onClick={() => handleSortChange(option.value)}
+                              className="cursor-pointer p-2 hover:bg-gray-200"
+                            >
+                              {option.label}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                  <Link to="/datapelamar">
                     <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                       Lihat Selengkapnya
                     </button>
@@ -356,7 +411,19 @@ const handlePageChange = (newPage) => {
                             ).toLocaleDateString()}
                           </td>
                           <td className="py-2 px-4 border-b">
-                            {peserta.user.status}
+                            <span
+                              className={`${
+                                peserta.user.status === "Accepted"
+                                  ? "text-green-500"
+                                  : peserta.user.status === "Rejected"
+                                  ? "text-red-500"
+                                  : peserta.user.status === "Verifying"
+                                  ? "text-black"
+                                  : ""
+                              }`}
+                            >
+                              {peserta.user.status}
+                            </span>
                           </td>
                           <td className="py-2 px-4 border-b flex flex-row">
                             <button
