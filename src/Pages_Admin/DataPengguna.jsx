@@ -367,7 +367,7 @@ const DataPengguna = () => {
                       </span>
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <div className="flex space-x-2">
+                      <div className="flex items-center justify-center space-x-2">
                         {/* Tampilkan tombol "Terima" hanya jika statusnya bukan "NotVerifying" */}
                         {peserta.status !== "NotVerifying" && (
                           <button

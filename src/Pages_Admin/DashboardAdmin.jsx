@@ -30,23 +30,19 @@ const DashboardAdmin = () => {
   const [currentPage, setCurrentPage] = useState(1); // State untuk halaman saat ini
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  
-
   // Function to check if user is logged in and fetch data
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setError("Anda belum login. Silakan login terlebih dahulu.");
-    localStorage.removeItem("token"); // Hapus token jika tidak ada
-    window.location.href = "/loginadmin"; // Redirect ke halaman login
-  } else {
-    fetchDataTabel(token);
-  }
-}, []); // This only runs once, on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Anda belum login. Silakan login terlebih dahulu.");
+      localStorage.removeItem("token"); // Hapus token jika tidak ada
+      window.location.href = "/loginadmin"; // Redirect ke halaman login
+    } else {
+      fetchDataTabel(token);
+    }
+  }, []); // This only runs once, on component mount
 
   useEffect(() => {
-    
-
     const token = localStorage.getItem("token");
     if (token) {
       fetchDataTabel(token);
@@ -69,7 +65,6 @@ useEffect(() => {
             Authorization: `Bearer ${token}`,
           },
         }
-        
       );
 
       // console.log("dashboard", response)
@@ -91,7 +86,6 @@ useEffect(() => {
     }
   };
 
-
   const fetchDataTabel = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -108,10 +102,8 @@ useEffect(() => {
             Authorization: `Bearer ${token}`,
           },
         }
-        
       );
 
-      
       setApplicantsData(response?.data?.applicantsList || []);
       setTotalApplicants(response?.data?.totalApplicants || 0);
       setVerifyingApplicants(response?.data?.verifyingApplicants || 0);
@@ -211,15 +203,17 @@ useEffect(() => {
       message = `Maaf, lamaran magang Anda tidak dapat kami terima. Terima kasih telah mendaftar dan tetap semangat!`;
     }
 
+    // Format nomor telepon dengan kode negara Indonesia
     const formattedPhoneNumber = phoneNumber.startsWith("0")
       ? `62${phoneNumber.slice(1)}`
       : `62${phoneNumber}`;
 
-    const whatsappURL = `https://api.whatsapp.com/send?phone=${formattedPhoneNumber}&text=${encodeURIComponent(
+    // Buat URL WhatsApp API dengan pesan yang sudah di-encode
+    const whatsappURL = `https://wa.me/${formattedPhoneNumber}?text=${encodeURIComponent(
       message
     )}`;
 
-    console.log("Opening WhatsApp URL:", whatsappURL);
+    // Buka URL di tab baru
     window.open(whatsappURL, "_blank");
   };
 
@@ -245,8 +239,9 @@ useEffect(() => {
     } catch (error) {
       console.error("Error updating status:", error);
     }
-    console.log(applicantsData); // Cek struktur data
-    const notelp = data?.applicantsData[index]?.telp_user; // Cek apakah 'notelp' valid
+    console.log("DATA teampil", applicantsData); // Cek struktur data
+    const notelp = applicantsData[index]?.user?.Profile?.telp_user; // Cek apakah 'notelp' valid
+    console.log("no telpon", notelp);
     sendWhatsAppMessage(notelp, status);
   };
 
@@ -425,31 +420,50 @@ useEffect(() => {
                               {peserta.user.status}
                             </span>
                           </td>
-                          <td className="py-2 px-4 border-b flex flex-row">
-                            <button
-                              className="ml-2 px-4 py-2 w-full bg-green-500 text-white rounded-lg hover:bg-green-600"
-                              onClick={() =>
-                                handleUpdateStatus(
-                                  peserta.user_id,
-                                  "Accepted",
-                                  index
-                                )
-                              }
-                            >
-                              Terima
-                            </button>
-                            <button
-                              className="ml-2 px-4 py-2 w-full bg-red-500 text-white rounded-lg hover:bg-red-600"
-                              onClick={() =>
-                                handleUpdateStatus(
-                                  peserta.user_id,
-                                  "Rejected",
-                                  index
-                                )
-                              }
-                            >
-                              Tolak
-                            </button>
+                          <td className="py-2 px-4 border-b ">
+                            <div className="flex items-center justify-center space-x-2">
+                              {/* Tampilkan tombol "Terima" hanya jika statusnya bukan "Accepted" */}
+                              {peserta.user.status !== "Rejected" && (
+                                <button
+                                  onClick={() =>
+                                    handleUpdateStatus(
+                                      peserta.user_id,
+                                      "Accepted",
+                                      index
+                                    )
+                                  }
+                                  className={`px-3 py-1 text-white rounded ${
+                                    peserta.user.status === "Accepted"
+                                      ? "bg-gray-400 cursor-not-allowed" // Jika status Accepted, tombol Terima disabled
+                                      : "bg-green-500" // Tombol aktif jika status bukan Accepted
+                                  }`}
+                                  disabled={peserta.user.status === "Accepted"} // Disabled jika status Accepted
+                                >
+                                  Terima
+                                </button>
+                              )}
+
+                              {/* Tampilkan tombol "Tolak" hanya jika statusnya bukan "Accepted" */}
+                              {peserta.user.status !== "Accepted" && (
+                                <button
+                                  onClick={() =>
+                                    handleUpdateStatus(
+                                      peserta.user_id,
+                                      "Rejected",
+                                      index
+                                    )
+                                  }
+                                  className={`px-3 py-1 text-white rounded ${
+                                    peserta.user.status === "Rejected"
+                                      ? "bg-gray-400 cursor-not-allowed" // Jika status Rejected, tombol Tolak disabled
+                                      : "bg-red-500" // Tombol aktif jika status bukan Rejected
+                                  }`}
+                                  disabled={peserta.user.status === "Rejected"} // Disabled jika status Rejected
+                                >
+                                  Tolak
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))
