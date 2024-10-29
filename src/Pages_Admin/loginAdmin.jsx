@@ -67,7 +67,7 @@ const LoginAdmin = () => {
     try {
       // Login request
       const loginResponse = await axios.post(
-        "http://localhost:5000/api/admin/login",
+        "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admin/login",
         {
           nip,
           password,
@@ -79,7 +79,7 @@ const LoginAdmin = () => {
         localStorage.setItem("token", token);
 
         const adminResponse = await axios.get(
-          "http://localhost:5000/api/admins",
+          "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admins",
           {
             headers: { Authorization: `Bearer ${token}` },
             params: { nip },

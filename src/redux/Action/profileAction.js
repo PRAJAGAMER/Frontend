@@ -12,7 +12,7 @@ export const getDataProfil = () => async (dispatch, getState) => {
     // console.log("Token from state:", token); // Debug log
 
     // Set Authorization header with the token
-    const response = await axios.get("http://localhost:5000/api/profile", {
+    const response = await axios.get("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/profile", {
       headers: {
         Authorization: `Bearer ${token}`, // Attach token here
       },
@@ -39,7 +39,7 @@ export const postUpdateProfil =
 
       // Set Authorization header with the token
       const response = await axios.post(
-        "http://localhost:5000/api/profile",
+        "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/profile",
         data,
         {
           headers: {

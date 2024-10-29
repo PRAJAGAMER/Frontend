@@ -14,7 +14,7 @@ function InfoPendaftaran() {
   useEffect(() => {
     const fetchBanner = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/banner?nameBanner=Lowongan', {
+        const response = await fetch('https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/banner?nameBanner=Lowongan', {
           method: 'GET',
         });
 

@@ -39,7 +39,7 @@ const EditProfilePage = () => {
     namaPembimbing: dataEditProfile.name_supervisor,
     noTelpPembimbing: dataEditProfile.telp_supervisor,
     emailPembimbing: dataEditProfile.email_supervisor,
-    fotoProfil: "http://localhost:5000/uploads/" + dataEditProfile.photo,
+    fotoProfil: "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" + dataEditProfile.photo,
     provinsiDomisili: dataEditProfile.province_domicile,
     provinsiKTP: dataEditProfile.province_ktp,
   });
@@ -54,7 +54,7 @@ const EditProfilePage = () => {
 
   useEffect(() => {
     axios
-      .get("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json")
+      .get("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/profile")
       .then((response) => {
         setProvinsiList(response.data);
       })

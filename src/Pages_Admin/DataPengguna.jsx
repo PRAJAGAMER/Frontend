@@ -42,7 +42,7 @@ const DataPengguna = () => {
 
   const fetchData = async (token) => {
     try {
-      const response = await axios.get("http://localhost:5000/api/users", {
+      const response = await axios.get("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/users", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -190,7 +190,7 @@ const DataPengguna = () => {
     }
 
     try {
-      await axios.put("http://localhost:5000/api/users/status", data, {
+      await axios.put("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/users/status", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -340,13 +340,55 @@ const DataPengguna = () => {
                       {peserta?.University?.major || "Kosong"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta?.Profile?.photo ? "Ada" : "Tidak Ada"}
+                      {peserta?.Profile?.photo ? (
+                        <a
+                          href={
+                            "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" +
+                            peserta?.Profile?.photo
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          Lihat Foto
+                        </a>
+                      ) : (
+                        "File Tidak Tersedia"
+                      )}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta?.Regist?.cv ? "Ada" : "Tidak Ada"}
+                      {peserta?.Regist?.cv ? (
+                        <a
+                          href={
+                            "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" +
+                            peserta?.Regist?.cv
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          Lihat CV
+                        </a>
+                      ) : (
+                        "File Tidak Tersedia"
+                      )}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {peserta?.Regist?.score_list ? "Ada" : "Tidak Ada"}
+                      {peserta?.Regist?.score_list ? (
+                        <a
+                          href={
+                            "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" +
+                            peserta?.Regist?.score_list
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          Lihat Daftar Nilai
+                        </a>
+                      ) : (
+                        "File Tidak Tersedia"
+                      )}
                     </td>
                     <td className="py-2 px-4 border-b">
                       {formatDate(peserta.createdAt)}

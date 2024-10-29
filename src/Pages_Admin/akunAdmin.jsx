@@ -41,7 +41,7 @@ function AkunAdmin() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/admins", {
+      const response = await fetch("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admins", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +68,7 @@ function AkunAdmin() {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/${id}`, {
+      const response = await fetch(`https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admin/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -97,7 +97,7 @@ function AkunAdmin() {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://localhost:5000/api/admins", {
+      const response = await fetch("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admins", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
