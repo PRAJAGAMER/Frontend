@@ -29,7 +29,7 @@ function UpdateInfo() {
   const fetchUploadedBanner = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/banner?nameBanner=${bannerName}`,
+        `https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/banner?nameBanner=${bannerName}`,
         {
           method: "GET",
         }
@@ -98,7 +98,7 @@ function UpdateInfo() {
   
       setUploading(true);
   
-      const response = await fetch("http://localhost:5000/api/banner", {
+      const response = await fetch("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/banner", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

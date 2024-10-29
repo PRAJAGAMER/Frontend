@@ -42,7 +42,7 @@ function DataPelamar() {
 
   const fetchPesertaData = async (token) => {
     try {
-      const response = await fetch("http://localhost:5000/api/users2", {
+      const response = await fetch("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/users2", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -209,7 +209,7 @@ function DataPelamar() {
     }
 
     try {
-      await axios.put("http://localhost:5000/api/users/status2", data, {
+      await axios.put("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/users/status2", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -367,7 +367,7 @@ function DataPelamar() {
                       {peserta.Regist.recommend_letter ? (
                         <a
                           href={
-                            "http://localhost:5000/uploads/" +
+                            "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" +
                             peserta.Regist.recommend_letter
                           }
                           target="_blank"
@@ -384,7 +384,7 @@ function DataPelamar() {
                       {peserta.Regist.cv ? (
                         <a
                           href={
-                            "http://localhost:5000/uploads/" + peserta.Regist.cv
+                            "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" + peserta.Regist.cv
                           }
                           target="_blank"
                           rel="noopener noreferrer"
@@ -400,7 +400,7 @@ function DataPelamar() {
                       {peserta.Regist.portofolio ? (
                         <a
                           href={
-                            "http://localhost:5000/uploads/" +
+                            "https://backend-prajagamer-920196572245.asia-southeast2.run.app/uploads/" +
                             peserta.Regist.portofolio
                           }
                           target="_blank"

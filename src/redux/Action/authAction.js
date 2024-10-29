@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const login = (data, navigate) => async (dispatch, getState) => {
   try {
-    const response = await axios.post(`http://localhost:5000/api/user/login`, data, {
+    const response = await axios.post(`https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/user/login`, data, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -89,7 +89,7 @@ export const register = (data, navigate) => async (dispatch, getState) => {
   try {
     // Mengirimkan permintaan POST ke API register dengan formData dan header multipart/form-data
     const response = await axios.post(
-      `http://localhost:5000/api/user/register`,
+      `https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/user/register`,
       data,
       {
         headers: {

@@ -103,7 +103,7 @@ function ModalTambahAdmin({ isOpen, onClose, onAddAdmin }) {
     if (validate()) {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/admin/register",
+          "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admin/register",
           {
             method: "POST",
             headers: {

@@ -233,7 +233,7 @@ const Register = () => {
     if (validate()) {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/user/register",
+          "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/user/register",
           formDataToSend,
           {
             headers: {

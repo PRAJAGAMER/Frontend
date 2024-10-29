@@ -16,7 +16,7 @@ export const getDataPendaftaran = () => async (dispatch, getState) => {
 
     // Set Authorization header with the token
     const response = await axios.get(
-      "http://localhost:5000/api/internship-form",
+      "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/internship-form",
       {
         headers: {
           Authorization: `Bearer ${token}`, // Attach token here
@@ -70,7 +70,7 @@ export const postPendaftaranMagang =
 
       // Set Authorization header with the token
       const response = await axios.post(
-        "http://localhost:5000/api/apply-internship",
+        "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/apply-internship",
         data,
         {
           headers: {

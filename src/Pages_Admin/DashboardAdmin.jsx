@@ -59,7 +59,7 @@ const DashboardAdmin = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/admin/dashboard",
+        "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admin/dashboard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -96,7 +96,7 @@ const DashboardAdmin = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/admin/dashboard",
+        "https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/admin/dashboard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -227,7 +227,7 @@ const DashboardAdmin = () => {
     }
 
     try {
-      await axios.put("http://localhost:5000/api/users/status2", data, {
+      await axios.put("https://backend-prajagamer-920196572245.asia-southeast2.run.app/api/users/status2", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
