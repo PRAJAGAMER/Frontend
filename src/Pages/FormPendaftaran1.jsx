@@ -27,7 +27,7 @@ function FormPendaftaran1() {
   }, []);
 
   const dataPendaftaran = useSelector((state) => state.pendaftaran.dataPendaf);
-  console.log("data xxxxxx", dataPendaftaran);
+  // console.log("data xxxxxx", dataPendaftaran);
 
   const handleKesediaanChange = (event) => {
     const value = event.target.value === "true";

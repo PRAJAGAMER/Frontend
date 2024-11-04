@@ -60,7 +60,7 @@ function AkunAdmin() {
       const data = await response.json();
       setAdminData(data);
     } catch (error) {
-      console.error("Error fetching admin data:", error);
+      // console.error("Error fetching admin data:", error);
     }
   };
 
@@ -81,7 +81,7 @@ function AkunAdmin() {
 
       setAdminData(adminData.filter((admin) => admin.id !== id));
     } catch (error) {
-      console.error("Error deleting admin:", error);
+      // console.error("Error deleting admin:", error);
     }
   };
 
@@ -110,7 +110,7 @@ function AkunAdmin() {
       const updatedAdminData = await response.json();
       setAdminData(updatedAdminData);
     } catch (error) {
-      console.error("Error fetching updated admin data:", error);
+      // console.error("Error fetching updated admin data:", error);
     }
 
     handleCloseModal();

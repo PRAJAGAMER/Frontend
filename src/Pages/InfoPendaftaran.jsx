@@ -24,14 +24,14 @@ function InfoPendaftaran() {
           setInfoOprecBanner(imageUrl); // Simpan URL banner di state
         } else if (response.status === 404) {
           setError("Banner tidak ditemukan.");
-          console.error("Banner tidak ditemukan.");
+          // console.error("Banner tidak ditemukan.");
         } else {
           setError("Gagal memuat banner.");
-          console.error("Error fetching banner:", response.statusText);
+          // console.error("Error fetching banner:", response.statusText);
         }
       } catch (error) {
         setError("Terjadi kesalahan saat memuat banner.");
-        console.error("Error fetching banner:", error);
+        // console.error("Error fetching banner:", error);
       } finally {
         setLoading(false); // Set loading selesai
       }

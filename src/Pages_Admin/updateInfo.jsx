@@ -45,7 +45,7 @@ function UpdateInfo() {
         toast.error("Gagal memuat banner.");
       }
     } catch (error) {
-      console.error("Error fetching banner:", error);
+      // console.error("Error fetching banner:", error);
       toast.error("Terjadi kesalahan saat memuat banner.");
     }
   };
@@ -116,11 +116,11 @@ function UpdateInfo() {
         fileInputRef.current.value = ""; // Reset file input field
       } else {
         const errorMessage = await response.text();
-        console.error("Error uploading file:", errorMessage);
+        // console.error("Error uploading file:", errorMessage);
         toast.error("Gagal mengunggah file. " + errorMessage);
       }
     } catch (error) {
-      console.error("Upload error:", error);
+      // console.error("Upload error:", error);
       toast.error("Terjadi kesalahan saat mengunggah file.");
     } finally {
       setUploading(false);

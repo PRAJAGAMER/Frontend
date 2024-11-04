@@ -64,10 +64,10 @@ function DataPelamar() {
         localStorage.removeItem("token"); // Hapus token
         window.location.href = "/loginadmin"; // Redirect ke halaman login
       } else {
-        console.error("Failed to fetch data:", response.statusText);
+        // console.error("Failed to fetch data:", response.statusText);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      // console.error("Error fetching data:", error);
     }
   };
 
@@ -163,7 +163,7 @@ function DataPelamar() {
   const currentData = sortedData().slice(startIndex, startIndex + itemsPerPage);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  console.log("first", currentData);
+  // console.log("first", currentData);
 
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -174,7 +174,7 @@ function DataPelamar() {
 
   const sendWhatsAppMessage = (phoneNumber, status) => {
     if (!phoneNumber) {
-      console.error("Nomor telepon tidak ditemukan.");
+      // console.error("Nomor telepon tidak ditemukan.");
       return;
     }
 
@@ -202,7 +202,7 @@ function DataPelamar() {
   const handleUpdateStatus = async (id, status, index) => {
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-    console.log("DATA PPENGGUNA", data);
+    // console.log("DATA PPENGGUNA", data);
     if (!token) {
       window.location.href = "/loginadmin";
       return;
@@ -219,9 +219,9 @@ function DataPelamar() {
       // Fetch updated data
       fetchPesertaData(token);
     } catch (error) {
-      console.error("Error updating status:", error);
+      // console.error("Error updating status:", error);
     }
-    console.log(pesertaData); // Cek struktur data
+    // console.log(pesertaData); // Cek struktur data
     const notelp = pesertaData[index]?.Profile?.telp_user; // Cek apakah 'notelp' valid
     sendWhatsAppMessage(notelp, status);
   };

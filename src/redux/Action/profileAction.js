@@ -25,17 +25,17 @@ export const getDataProfil = () => async (dispatch, getState) => {
     }
   } catch (error) {
     // Handle error and dispatch error state
-    console.error("Error fetching data:", error);
+    // console.error("Error fetching data:", error);
   }
 };
 
 export const postUpdateProfil =
   (data, navigate) => async (dispatch, getState) => {
-    console.log("form Data 111", data);
+    // console.log("form Data 111", data);
     try {
       // Get token from the Redux state
       const token = getState().auth.token;
-      console.log("Token from state:", token);
+      // console.log("Token from state:", token);
 
       // Set Authorization header with the token
       const response = await axios.post(
@@ -71,7 +71,7 @@ export const postUpdateProfil =
       }
     } catch (error) {
       // Handle error and show error toast notification
-      console.error("Error fetching data:", error);
+      // console.error("Error fetching data:", error);
 
       toast.error("Gagal memperbarui profil. Coba lagi nanti!", {
         position: "top-right",

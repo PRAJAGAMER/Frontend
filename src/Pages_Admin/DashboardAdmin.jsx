@@ -74,7 +74,7 @@ const DashboardAdmin = () => {
       setAcceptedApplicants(response?.data?.acceptedApplicants || 0);
       setRejectedApplicants(response?.data?.rejectedApplicants || 0);
     } catch (error) {
-      console.error("Error fetching applicants data:", error);
+      // console.error("Error fetching applicants data:", error);
 
       if (error.response && error.response.status === 401) {
         setError("Akses tidak diizinkan. Silakan login ulang.");
@@ -110,7 +110,7 @@ const DashboardAdmin = () => {
       setAcceptedApplicants(response?.data?.acceptedApplicants || 0);
       setRejectedApplicants(response?.data?.rejectedApplicants || 0);
     } catch (error) {
-      console.error("Error fetching applicants data:", error);
+      // console.error("Error fetching applicants data:", error);
 
       if (error.response && error.response.status === 401) {
         setError("Akses tidak diizinkan. Silakan login ulang.");
@@ -192,7 +192,7 @@ const DashboardAdmin = () => {
 
   const sendWhatsAppMessage = (phoneNumber, status) => {
     if (!phoneNumber) {
-      console.error("Nomor telepon tidak ditemukan.");
+      // console.error("Nomor telepon tidak ditemukan.");
       return;
     }
 
@@ -220,7 +220,7 @@ const DashboardAdmin = () => {
   const handleUpdateStatus = async (id, status, index) => {
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-    console.log("DATA PPENGGUNA", data);
+    // console.log("DATA PPENGGUNA", data);
     if (!token) {
       window.location.href = "/loginadmin";
       return;
@@ -237,11 +237,11 @@ const DashboardAdmin = () => {
       // Fetch updated data
       fetchDataTabel(token);
     } catch (error) {
-      console.error("Error updating status:", error);
+      // console.error("Error updating status:", error);
     }
-    console.log("DATA teampil", applicantsData); // Cek struktur data
+    // console.log("DATA teampil", applicantsData); // Cek struktur data
     const notelp = applicantsData[index]?.user?.Profile?.telp_user; // Cek apakah 'notelp' valid
-    console.log("no telpon", notelp);
+    // console.log("no telpon", notelp);
     sendWhatsAppMessage(notelp, status);
   };
 

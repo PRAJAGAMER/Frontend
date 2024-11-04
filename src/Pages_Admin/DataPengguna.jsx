@@ -56,7 +56,7 @@ const DataPengguna = () => {
         localStorage.removeItem("token"); // Hapus token
         window.location.href = "/loginadmin"; // Redirect ke halaman login
       } else {
-        console.error("Error fetching user data:", error);
+        // console.error("Error fetching user data:", error);
       }
     }
   };
@@ -156,7 +156,7 @@ const DataPengguna = () => {
 
   const sendWhatsAppMessage = (phoneNumber, status) => {
     if (!phoneNumber) {
-      console.error("Nomor telepon tidak ditemukan.");
+      // console.error("Nomor telepon tidak ditemukan.");
       return;
     }
 
@@ -183,7 +183,7 @@ const DataPengguna = () => {
   const handleUpdateStatus = async (id, status, index) => {
     const token = localStorage.getItem("token");
     let data = { userId: id, status: status };
-    console.log("DATA PPENGGUNA", data);
+    // console.log("DATA PPENGGUNA", data);
     if (!token) {
       window.location.href = "/loginadmin";
       return;
@@ -200,9 +200,9 @@ const DataPengguna = () => {
       // Fetch updated data
       fetchData(token);
     } catch (error) {
-      console.error("Error updating status:", error);
+      // console.error("Error updating status:", error);
     }
-    console.log(pesertaData); // Cek struktur data
+    // console.log(pesertaData); // Cek struktur data
     const notelp = pesertaData[index]?.Profile?.telp_user; // Cek apakah 'notelp' valid
     sendWhatsAppMessage(notelp, status);
   };

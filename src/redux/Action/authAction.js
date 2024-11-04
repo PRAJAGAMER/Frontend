@@ -84,7 +84,7 @@ export const login = (data, navigate) => async (dispatch, getState) => {
 };
 
 export const register = (data, navigate) => async (dispatch, getState) => {
-  console.log("Isi data:", data);
+  // console.log("Isi data:", data);
 
   try {
     // Mengirimkan permintaan POST ke API register dengan formData dan header multipart/form-data
@@ -100,13 +100,13 @@ export const register = (data, navigate) => async (dispatch, getState) => {
 
     // Cek jika respons status adalah 201 (Created)
     if (response.status === 201) {
-      console.log("Register Berhasil:", response);
+      // console.log("Register Berhasil:", response);
       alert("Registrasi berhasil!");
       navigate("/loginopsi");
     }
   } catch (error) {
     // Penanganan kesalahan saat melakukan permintaan
-    console.error("Error during registration:", error);
+    // console.error("Error during registration:", error);
 
     // Tampilkan alert jika registrasi gagal
     alert("Registrasi gagal. Silakan coba lagi.");

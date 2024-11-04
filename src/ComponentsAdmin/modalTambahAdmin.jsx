@@ -120,11 +120,11 @@ function ModalTambahAdmin({ isOpen, onClose, onAddAdmin }) {
           }
         );
 
-        console.log(response); // Periksa status respons server
+        // console.log(response); // Periksa status respons server
 
         if (!response.ok) {
           const errorMessage = await response.text();
-          console.error("Error response:", errorMessage); // Tampilkan error yang dikirim server
+          // console.error("Error response:", errorMessage); // Tampilkan error yang dikirim server
           throw new Error(errorMessage || "Gagal menambahkan admin");
         }
 
@@ -135,7 +135,7 @@ function ModalTambahAdmin({ isOpen, onClose, onAddAdmin }) {
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
-          pauseOnHover: true,
+          ApauseOnHover: true,
           draggable: true,
           progress: undefined,
           theme: "colored",

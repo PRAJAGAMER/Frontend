@@ -37,7 +37,7 @@ const EditProfilAdmin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
     // Add your axios post request or any API call here
   };
 

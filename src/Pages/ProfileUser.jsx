@@ -23,7 +23,7 @@ useEffect(() => {
  
 
   const dataProfil = useSelector((state) => state.profil.dataProfilUser);
-  console.log("data profile baruuu  ", dataProfil);
+  // console.log("data profile baruuu  ", dataProfil);
 
   return (
     <div className="bg-red-500 min-h-screen flex flex-col ">

@@ -13,7 +13,7 @@ const HeaderAdmin = () => {
   // Ambil nama admin dari localStorage ketika komponen pertama kali di-render
   useEffect(() => {
     const storedAdminName = localStorage.getItem("adminName");
-    console.log("Stored Admin Name:", storedAdminName);
+    // console.log("Stored Admin Name:", storedAdminName);
     if (storedAdminName) {
       setAdminName(storedAdminName);
     }

@@ -8,11 +8,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const getDataPendaftaran = () => async (dispatch, getState) => {
   try {
-    console.log("Starting fetch data pendaftaran"); // Debug log
+    // console.log("Starting fetch data pendaftaran"); // Debug log
 
     // Get token from the Redux state (assuming it's stored in state.auth.token)
     const token = getState().auth.token;
-    console.log("Token from state:", token); // Debug log
+    // console.log("Token from state:", token); // Debug log
 
     // Set Authorization header with the token
     const response = await axios.get(
@@ -24,26 +24,26 @@ export const getDataPendaftaran = () => async (dispatch, getState) => {
       }
     );
 
-    console.log("Response status:", response.status); // Debug log
+    // console.log("Response status:", response.status); // Debug log
     // Check for successful response
     if (response.status === 200) {
-      console.log("Data pendaftaran:", response.data.formData); // Debug log
+      // console.log("Data pendaftaran:", response.data.formData); // Debug log
       dispatch(setPendaf(response.data.formData));
     }
   } catch (error) {
     // Handle error and dispatch error state
-    console.error("Error fetching data:", error);
+    // console.error("Error fetching data:", error);
   }
 };
 
 export const postPendaftaranMagang =
   (formData, navigate) => async (dispatch, getState) => {
-    console.log("form Data Form", formData);
+    // console.log("form Data Form", formData);
 
     try {
       // Get token from the Redux state
       const token = getState().auth.token;
-      console.log("Token from state:", token); // Debug log
+      // console.log("Token from state:", token); // Debug log
 
       // Create FormData instance
       const data = new FormData();
@@ -66,7 +66,7 @@ export const postPendaftaranMagang =
 
       // Get token from the Redux state (assuming it's stored in state.auth.token)
 
-      console.log("Token from state:", token); // Debug log
+      // console.log("Token from state:", token); // Debug log
 
       // Set Authorization header with the token
       const response = await axios.post(
@@ -78,11 +78,11 @@ export const postPendaftaranMagang =
           },
         }
       );
-      console.log("response postPendaftaranMagang", response);
+      // console.log("response postPendaftaranMagang", response);
 
      // Check for successful response
      if (response.status === 200) {
-      console.log("Data profile login:", response.data); // Debug log
+      // console.log("Data profile login:", response.data); // Debug log
       dispatch(setDataFormPendaftaran(response.data));
       navigate("/");
 
@@ -100,7 +100,7 @@ export const postPendaftaranMagang =
     }
   } catch (error) {
     // Handle error and show error toast notification
-    console.error("Error fetching data:", error);
+    // console.error("Error fetching data:", error);
 
     toast.error("Gagal melakukan pendaftaran magang. Coba lagi nanti!", {
       position: "top-right",

@@ -228,7 +228,7 @@ const Register = () => {
     formDataToSend.append("cv", formData.cv);
     formDataToSend.append("score_list", formData.score_list);
 
-    console.log("FormData ready to send:", formDataToSend); // Debugging
+    // console.log("FormData ready to send:", formDataToSend); // Debugging
 
     if (validate()) {
       try {
@@ -241,7 +241,7 @@ const Register = () => {
             },
           }
         );
-        console.log("response", response); // Debugging: lihat response dari server
+        // console.log("response", response); // Debugging: lihat response dari server
 
         if (response.status === 201) {
           toast.success("Berhasil Registrasi", {
@@ -257,7 +257,7 @@ const Register = () => {
           navigate("/loginopsi");
         }
       } catch (error) {
-        console.error("Error during registration:", error.response); // Debugging: lihat error yang terjadi
+        // console.error("Error during registration:", error.response); // Debugging: lihat error yang terjadi
         toast.error("Registrasi gagal. Silakan coba lagi!", {
           position: "top-right",
           autoClose: 2000,

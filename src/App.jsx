@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Beranda from "./Pages/Beranda";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import InfoMitra from "./Pages/InfoMitra";
+import InfoMitra from "./Pages/infoMitra";
 import FormPendaftaran1 from "./Pages/FormPendaftaran1";
 import FormPendaftaran2 from "./Pages/FormPendaftaran2";
 import DaftarMagang from "./Pages/DaftarMagang";
@@ -24,6 +24,7 @@ import DataPengguna from "./Pages_Admin/DataPengguna";
 import EditProfilAdmin from "./Pages_Admin/EditProfilAdmin";
 import SyaratKetentuan from "./Pages/syaratKetentuan";
 import OpsiLogin from "./Pages/OpsiLogin";
+import NotFound from "./Pages/NotFound";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -103,13 +104,13 @@ export default function App() {
       path: "syaratdanketentuan",
       element: <SyaratKetentuan />,
     },
+    { path: "*", element: <NotFound /> }, // Pastikan NotFound sudah diimpor jika ingin menggunakan ini
   ]);
 
   return (
     <Provider store={store}>
       <ToastContainer />
       <RouterProvider router={router} />
-      
     </Provider>
   );
 }

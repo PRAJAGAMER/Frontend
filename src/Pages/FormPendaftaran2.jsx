@@ -32,7 +32,7 @@ function FormPendaftaran2() {
   const formKetersediaan = useSelector(
     (state) => state.pendaftaran.dataFormPendaf.ketersediaanPenempatan
   );
-  console.log("ketersediaan tempat",formKetersediaan)
+  // console.log("ketersediaan tempat",formKetersediaan)
 
   // Redirect to login if token is not present
   useEffect(() => {
@@ -147,7 +147,7 @@ const getMinEndDate = () => {
       ...(formData2.portofolio && { portofolio: formData2.portofolio }),
     };
   
-    console.log("data handle submit", data);
+    // console.log("data handle submit", data);
   
     // Dispatch action
     dispatch(postPendaftaranMagang(data, navigate));
@@ -195,7 +195,7 @@ const getMinEndDate = () => {
           }));
         }
       } else {
-        console.error("File is not valid");
+        // console.error("File is not valid");
       }
     }
   };
@@ -220,7 +220,7 @@ const getMinEndDate = () => {
           }));
         }
       } else {
-        console.error("File is not valid");
+        // console.error("File is not valid");
       }
     }
   };
@@ -245,7 +245,7 @@ const getMinEndDate = () => {
           }));
         }
       } else {
-        console.error("File is not valid");
+        // console.error("File is not valid");
       }
     }
   };
